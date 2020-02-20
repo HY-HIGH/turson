@@ -1,0 +1,20 @@
+<launch>
+  <!-- turtlebot3 world open -->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"></include>
+  
+  <!-- turtlebot3 navigation map file open -->  <!-- 만약에 map파일을 바꾸고 싶다면 아래의 map.yaml위치를 본인에게 맞게 수정하면 된다. -->
+  <arg name="map_file" default="$HOME/catkin_ws/src/turson/map/map.yaml"/>
+  <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch"></include>
+  
+  <!-- turtlebot3 mode controller node open -->
+  <!--  mode control parameter를 설정하고 mode control package를 실행한다.-->
+  <param name="mode" value="0" />
+  <!-- <node pkg="mode_control" name="mode_controller" type="main_mode_control.py" launch-prefix="xterm -e"></node> -->
+  <!-- <node pkg="turson" name="mode_controller" type="mode_control.py" launch-prefix="xterm -e"></node> -->
+  <node pkg="turson" name="init_pose" type="init_pose.py"></node>
+  <node pkg="turson" name="move_turson" type="move_turson.py"></node>
+  <node pkg="turson" name="turson_box_data" type="turson_box_data.py"></node>
+  
+  <!-- <include file="$(find turson)/launch/init_pose.launch"></include> -->
+  <!-- <include file="$(find patrol_mode)/launch/move_robot.launch"></include> -->
+</launch>
