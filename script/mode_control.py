@@ -42,13 +42,13 @@ def current_pose_callback(odom_data):
 #         robot_status = True
 #     else:
 #         pass
-def stop_callback(stop):
-    global stop_signal
+# def stop_callback(stop):
+#     global stop_signal
 
-    if stop == 1:
-        stop_signal = True
-    else:
-        pass
+#     if stop == 1:
+#         stop_signal = True
+#     else:
+#         pass
 
 def cb_bounding_box(image_data):
     global global_x_mid
@@ -67,7 +67,7 @@ def cb_bounding_box(image_data):
         pass # 경고음
 
     else :
-        if stop_signal == True:
+        if rospy.get_param('stop_signal') == 1:
             print('navigation mode')
             
             rospy.set_param('mode',2)
@@ -75,7 +75,7 @@ def cb_bounding_box(image_data):
             detection_image_centralize()    
 
             rospy.set_param('mode',1)
-            stop_signal = False
+            rospy.set_param('stop_signal',0)
         else:
             pass
 
@@ -207,6 +207,7 @@ if __name__ == '__main__':
         rate = rospy.Rate(1) # 1hz                # while 반복 속도 제어
         rate_main = rospy.Rate(0.5) # 0.5hz       # while 반복 속도 제어
         past_get_param = rospy.get_param('mode')  # Set parameter 'mode'
+        rospy.set_param('stop_signal',0)
     #----------------Initiate main statement-------------
         mode_controller()                         # main while 문 포함
 
