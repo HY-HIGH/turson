@@ -337,6 +337,7 @@ def patrol_mode():
                     pub_stop_destination.publish(current_pose)
                 else:
                     print("Robot stopped!")
+                    pub_stop_signal.publish(1)
                     temp_finished = True
             else:
                 print("I do nothing")
@@ -380,6 +381,7 @@ if __name__ == '__main__':
         #   1) Mode: 현재 모드를 업데이트 하기 위해 필요
         #   2) current_pose: 로봇의 현재 위치를 알기 위해 필요
         pub_twist = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+        pub_stop_signal = rospy.Publisher('stop_signal',Int64,queue_size =10)
         pub_destination = rospy.Publisher('set_robot_destination', PoseStamped, queue_size=10)
         pub_stop_destination = rospy.Publisher('set_robot_destination', PoseStamped, queue_size=10)
 

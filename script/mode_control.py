@@ -42,11 +42,17 @@ def status_callback(result):
         robot_status = True
     else:
         pass
+def stop_callback(stop):
+    global stop_signal
+
+    if stop == 1:
+        stop_signal = True
 
 def cb_bounding_box(image_data):
     global global_x_mid
     global global_box_size
     global robot_status
+    global stop_signal
 
     global_x_mid        =  image_data.x_mid
     global_box_size     =  image_data.box_size
@@ -59,7 +65,7 @@ def cb_bounding_box(image_data):
         pass # 경고음
 
     else :
-        if robot_status == True:
+        if stop_signal == True:
             print('navigation mode')
             
             rospy.set_param('mode',2)
@@ -67,7 +73,7 @@ def cb_bounding_box(image_data):
             detection_image_centralize()    
 
             rospy.set_param('mode',1)
-            robot_status = False
+            stop_signal = False
         else:
             pass
 
@@ -177,6 +183,7 @@ if __name__ == '__main__':
         rospy.Subscriber('/odom', Odometry, current_pose_callback)
         rospy.Subscriber('/move_base/result',MoveBaseActionResult,status_callback)
         rospy.Subscriber('/box_data',Box_data,cb_bounding_box)
+        rospy.Subscriber('/stop_signal',Int64,stop_callback)
 
     #--------------------Setup parameter-----------------
         rospy.set_param('mode',0)
