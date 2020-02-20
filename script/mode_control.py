@@ -185,10 +185,11 @@ if __name__ == '__main__':
         rospy.Subscriber('/odom', Odometry, current_pose_callback)
         rospy.Subscriber('/move_base/result',MoveBaseActionResult,status_callback)
         rospy.Subscriber('/box_data',Box_data,cb_bounding_box)
-        rospy.Subscriber('/stop_signal',Int64,stop_callback)
+        # rospy.Subscriber('/stop_signal',Int64,stop_callback)
 
     #--------------------Setup parameter-----------------
         rospy.set_param('mode',0)
+        rospy.set_param('stop_signal',0)
         
     #-------------------Define variables-----------------
         global twist
@@ -207,7 +208,6 @@ if __name__ == '__main__':
         rate = rospy.Rate(1) # 1hz                # while 반복 속도 제어
         rate_main = rospy.Rate(0.5) # 0.5hz       # while 반복 속도 제어
         past_get_param = rospy.get_param('mode')  # Set parameter 'mode'
-        rospy.set_param('stop_signal',0)
     #----------------Initiate main statement-------------
         mode_controller()                         # main while 문 포함
 
