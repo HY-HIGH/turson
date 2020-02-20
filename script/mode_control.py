@@ -35,18 +35,20 @@ def current_pose_callback(odom_data):
 #  이동 중: status = 1
 #  목표지점 도달: status = 3
 # ---------------------------------------------------------------------------- #
-def status_callback(result):
-    global robot_status
+# def status_callback(result):
+#     global robot_status
     
-    if result.status.status == 3:
-        robot_status = True
-    else:
-        pass
+#     if result.status.status == 3:
+#         robot_status = True
+#     else:
+#         pass
 def stop_callback(stop):
     global stop_signal
 
     if stop == 1:
         stop_signal = True
+    else:
+        pass
 
 def cb_bounding_box(image_data):
     global global_x_mid
