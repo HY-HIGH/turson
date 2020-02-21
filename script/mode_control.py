@@ -35,13 +35,13 @@ def current_pose_callback(odom_data):
 #  이동 중: status = 1
 #  목표지점 도달: status = 3
 # ---------------------------------------------------------------------------- #
-# def status_callback(result):
-#     global robot_status
+def status_callback(result):
+    global robot_status
     
-#     if result.status.status == 3:
-#         robot_status = True
-#     else:
-#         pass
+    if result.status.status == 3:
+        robot_status = True
+    else:
+        pass
 # def stop_callback(stop):
 #     global stop_signal
 
@@ -55,30 +55,44 @@ def cb_bounding_box(image_data):
     global global_box_size
     global robot_status
     global stop_signal
+    global person_detect
 
     global_x_mid        =  image_data.x_mid
     global_box_size     =  image_data.box_size
-    # print ('box_size :',global_box_size)
-    # print ('center? :',global_x_mid)
+    #print ('box_size :',global_box_size)
+    #print ('center? :',global_x_mid)
     print('person detected')
+    person_detect = 1
 
-    if global_box_size > 120000:
-        print('over box_size')
-        pass # 경고음
 
-    else :
-        if rospy.get_param('stop_signal') == 1:
-            print('navigation mode')
-            
-            rospy.set_param('mode',2)
+def mode_converter():
+    global person_detect
+    global robot_status
+    enough_distance = 120000
 
-            detection_image_centralize()    
+    if person_detect == 1: #사람이 검출
+        if global_box_size > enough_distance: # 사람이 가까이 있을 때
+            print('over box_size')
+            person_detect = 0
+            # 경고음
+        # nav_once 0: 네비게이션 도착전
+        elif (global_box_size < enough_distance) and (rospy.get_param('nav_once') == 1): # 사람이 충분히 멀리 있고 // 도착했을 때
+            rospy.set_param('mode',2) #센트럴 라이징 모드 진입 
+            if rospy.get_param('stop_signal') == 1: #멈춰라! 멈춤신호 받으면
+                print('navigation mode')
 
-            rospy.set_param('mode',1)
-            rospy.set_param('stop_signal',0)
+
+                detection_image_centralize()# 중심에 맞추고 중심에 오면 #네비게이션 엑티베이트   
+                rospy.set_param('mode',1)#네비게이션 모드
+
+                rospy.set_param('stop_signal',0)
+                person_detect = 0
+            else: 
+                pass
         else:
             pass
-
+    else :
+        print('no person')
 
 
 
@@ -105,9 +119,9 @@ def cb_bounding_box(image_data):
 
 
 def detection_image_centralize():
-    
     rate_temp = rospy.Rate(10)
     while True:
+        global global_x_mid
         if global_x_mid < 0.45:
             angular_velocity = 1
     
@@ -157,9 +171,7 @@ def detection_image_centralize():
 def mode_controller():
 
     while not rospy.is_shutdown():
-        global current_pose
-        global past_get_param
-
+        mode_converter()
         # if((past_get_param == 0) and (rospy.get_param('mode') == 1)):
         #     rospy.set_param('mode',2)
         #     detection_image_centralize()
@@ -183,14 +195,15 @@ if __name__ == '__main__':
         pub_mode = rospy.Publisher('mode_control', Int64, queue_size=10)   
 
         rospy.Subscriber('/odom', Odometry, current_pose_callback)
-        rospy.Subscriber('/move_base/result',MoveBaseActionResult,status_callback)
+        # rospy.Subscriber('/move_base/result',MoveBaseActionResult,status_callback)
         rospy.Subscriber('/box_data',Box_data,cb_bounding_box)
         # rospy.Subscriber('/stop_signal',Int64,stop_callback)
 
     #--------------------Setup parameter-----------------
         rospy.set_param('mode',0)
         rospy.set_param('stop_signal',0)
-        
+        rospy.set_param('nav_once',1)
+
     #-------------------Define variables-----------------
         global twist
         global robot_status
@@ -198,7 +211,7 @@ if __name__ == '__main__':
         global distance_margin                    # 정지를 위한 여유 거리
         global past_get_param                     # 모드 전환마다 해야 할 일 분기를 위해 선언
 
-
+        person_detect = 0
         global_box_size = 0
         global_x_mid      = 0
         robot_status = False

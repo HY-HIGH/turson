@@ -174,7 +174,7 @@ def box_size_2_distance():
 
     distance_factor = 0.000001             # 박스 사이즈 값에 따른 거리 비율 # 수정 필요 .작을 수록 가까이 가야한다.
     #distance_person = distance_factor * global_box_size
-    distance_person = 0.5
+    distance_person = 0.6
     
     return distance_person
 
@@ -209,59 +209,65 @@ def navigation():
 
     rate = rospy.Rate(1) # 발행 속도 10hz 
     while not rospy.is_shutdown():
-        global_mode = rospy.get_param('mode')
-
-
-     
-
-        if global_mode == 1 :
-            print("[INFO]: Navigation Mode ")
-            global_navigation_status = rospy.get_param('navigation_status') 
-            if global_navigation_status == 1 : # 순간 오도메트리 , 박스 사이즈 서브 스크라이브
+        global_navigation_status = rospy.get_param('navigation_status')
+        if global_navigation_status == 1 :# 사람이 검출되면
+            print("[INFO]: Navigation Activate ")
+            global_mode = rospy.get_param('mode')
+            if global_mode == 1:# 센트럴 라이징 완료 후
+                nav_once =  rospy.get_param('nav_once')
+                print('nav_once',rospy.get_param('nav_once'))
+                if nav_once == 1: # 한번만 
                 #initialize()  필요 없음
-                print("[INFO]: Navigation Activated ")
-                
+                    print("[INFO]: Navigation Mode ")
+                    
 
-                robot_destination = PoseStamped()  # 객체 선언 
-                cal_x,cal_y = calculate_coordinate() 
-                robot_destination.pose.position.x = cal_x
-                robot_destination.pose.position.y = cal_y
-                robot_destination.pose.position.z = 0.0
-                robot_destination.pose.orientation.x = global_temp_orientation_x  
-                robot_destination.pose.orientation.y = global_temp_orientation_y  
-                robot_destination.pose.orientation.z = global_temp_orientation_z  
-                robot_destination.pose.orientation.w = global_temp_orientation_w  
-                
-                pub_destination.publish(robot_destination)      # 퍼블리시 할 항목
-                
-                rospy.set_param('navigation_status',0) #파라미터 변경
+                    robot_destination = PoseStamped()  # 객체 선언 
+                    cal_x,cal_y = calculate_coordinate() 
+                    robot_destination.pose.position.x = cal_x
+                    robot_destination.pose.position.y = cal_y
+                    robot_destination.pose.position.z = 0.0
+                    robot_destination.pose.orientation.x = global_temp_orientation_x  
+                    robot_destination.pose.orientation.y = global_temp_orientation_y  
+                    robot_destination.pose.orientation.z = global_temp_orientation_z  
+                    robot_destination.pose.orientation.w = global_temp_orientation_w  
+                    global_result = False
+                    pub_destination.publish(robot_destination)      # 퍼블리시 할 항목
+                    rospy.set_param('nav_once',0)
+                else :
+                    global_result = False
+                    
 
-                global_navigation_status = rospy.get_param('navigation_status')   # 한번만 적용
                 while True:
-                    print ("Robot is moving now")
+                    #print ("Robot is moving now")
                     if global_result == True: # 도착하면
                         #정지 코드 [필요없을듯]
-                        stop_robot()
-                        rospy.set_param('mode',0) #파라미터 변경
+                        print ("========parameter change========")
+                        print ("========Patrol Mode========")
+
+                        
+                        #stop_robot()
                         global_result = False
+                        rospy.set_param('navigation_status',0) #파라미터 변경
+                        rospy.set_param('mode',0) #파라미터 변경
 
                         # 여기에서 파라미터를 바꾸어 줄것인지?
                         # 패트롤 모드로 진입 -> 박스크기가 일정이상이면 그대로 패트롤
-                        #   
+                        rospy.set_param('nav_once',1)#네비게이션 한번만 모드  
+
                         break
 
 
+            elif global_mode == 0:
+                print("[INFO]: Patrol Mode ")
+            elif global_mode == 2:
+                print("[INFO]: Centralize Mode ")
+            else:
+                print("[INFO]: WTF")
 
-            elif global_navigation_status == 0 :
-                print("[INFO]: Navigation Deactivated ")
-        elif global_mode == 0:
-            print("[INFO]: Patrol Mode ")
-        elif global_mode == 2:
-            print("[INFO]: Centralize Mode ")
-        else:
-            print("[INFO]: WTF")
-            
-            pass
+                pass
+
+        elif global_navigation_status == 0 :
+            print("[INFO]: Navigation Deactivated ")
 
 
         rate.sleep()    # 반복문을 위한 일시정지

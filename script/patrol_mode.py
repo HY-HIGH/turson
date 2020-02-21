@@ -167,8 +167,8 @@ def is_reached_position():
     if rospy.get_param('mode') == 2: # 이동 중에 대상이 포착된 경우 함수실행을 중지
         pass
     else:
-        # print("robot_start",robot_start)
-        # print("robot_status",robot_status)
+        print("robot_start",robot_start)
+        print("robot_status",robot_status)
         if (robot_start == False) and (robot_status == False): # 출발도 도착도 안했다면
             position_timer(1.0)
             past_position = copy.deepcopy(current_pose.pose.position)
@@ -223,7 +223,9 @@ def is_reached_position():
             else:
                 switch_patrol_point()
         else: #출발은 안했는데 도착을 했으면? 말도 안되는 상황임
-            pass
+            robot_start  =  False
+            robot_status =  False
+
                 
 
 # ---------------------------------------------------------------------------- #
@@ -333,7 +335,8 @@ def patrol_mode():
             # 제자리 회전 중, centralize가 걸리면
             if temp_finished == False:
                 if robot_status == False:
-                    print("Try to stop robot...")
+                    print("Try to stop robot..."*10)
+                    
                     pub_stop_destination.publish(current_pose)
                 else:
                     print("Robot stopped!")
