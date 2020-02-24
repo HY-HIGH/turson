@@ -73,8 +73,8 @@ def go_patrol_point(x,y):
     robot_destination.pose.orientation.y = robot_orient.y
     robot_destination.pose.orientation.z = robot_orient.z
     robot_destination.pose.orientation.w = robot_orient.w
-    print("x_target:{} y_target:{}".format(x,y))
     pub_destination.publish(robot_destination)
+    print("x_target:{} y_target:{}".format(x,y))
 
 # ---------------------------------------------------------------------------- #
 #                             Get current position                             #
@@ -114,7 +114,7 @@ def rotating_mission(second):
             pub_twist.publish(twist)
             break
         rate_temp.sleep()
-        print("Patrol_Rotating...");print('\n')
+        print("Patrol_Rotating...")
 
 def rotate_callibrate():
     global switch_patrol
@@ -136,7 +136,7 @@ def rotate_callibrate():
         current_yaw = euler[2]+math.pi
         if (abs((euler[2]+math.pi) - yaw)) < 0.3:
             twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = 0.0
-            print("Callibration finished!!!")
+            print('='*15);print("Callibration finished!!!");print('='*15);print('\n')
             pub_twist.publish(twist)
             break
         else: # 양수: 반시계방향 회전 | 음수: 시계방향 회전
@@ -170,10 +170,10 @@ def is_reached_position():
         print("robot_start",robot_start)
         print("robot_status",robot_status)
         if (robot_start == False) and (robot_status == False): # 출발도 도착도 안했다면
-            position_timer(1.0)
+            position_timer(0.8)
             past_position = copy.deepcopy(current_pose.pose.position)
-            print("past",past_position); print("="*15)
-            print("current",current_pose.pose.position);print('\n'*3)
+            # print("past",past_position); print("="*15)
+            # print("current",current_pose.pose.position);print('\n'*3)
             
             while True:
                 if abs(past_position.x - current_pose.pose.position.x) > (distance_margin ) or \
@@ -222,7 +222,7 @@ def is_reached_position():
                 pass
             else:
                 switch_patrol_point()
-        else: #출발은 안했는데 도착을 했으면? 말도 안되는 상황임
+        else: 
             robot_start  =  False
             robot_status =  False
 
@@ -267,7 +267,7 @@ def switch_patrol_point():
     else:
         x_goal = BOTTOM_RIGHT[0]
         y_goal = BOTTOM_RIGHT[1]
-    print("switch_patrol:{} x_target:{} y_target:{}".format(switch_patrol,x_goal,y_goal))
+    # print("switch_patrol:{} x_target:{} y_target:{}".format(switch_patrol,x_goal,y_goal))
 
 # ---------------------------------------------------------------------------- #
 #          calculate_shortest_distance_between_robot_and_patrol_point          #
@@ -320,31 +320,28 @@ def patrol_mode():
         global robot_status
         global robot_start
         if rospy.get_param('mode') == 0 :
-            rospy.loginfo("Patrol mode activating: %d"%rospy.get_param('mode'))
+            print("[Patrol mode]: %d"%rospy.get_param('mode'))
             is_reached_position()
             temp_finished  = False
         elif rospy.get_param('mode') == 1:
-            rospy.loginfo("Patrol mode deactivating: %d"%rospy.get_param('mode'))
+            print("[Navigation mode]: %d"%rospy.get_param('mode'))
             calculate_shortest_distance_between_robot_and_patrol_point()
             robot_start = False
             robot_status = False
             temp_finished  = False
         else:
-            rospy.loginfo("Image centralizeing...: %d"%rospy.get_param('mode'))
-            # 주행 중, centralize가 걸리면,
-            # 제자리 회전 중, centralize가 걸리면
+            print("Image centralizeing...: %d"%rospy.get_param('mode'))
+           
             if temp_finished == False:
                 if robot_status == False:
                     print("Try to stop robot..."*10)
-                    
                     pub_stop_destination.publish(current_pose)
                 else:
                     print("Robot stopped!")
-                    # pub_stop_signal.publish(1)
                     rospy.set_param('stop_signal',1)
                     temp_finished = True
             else:
-                print("I do nothing")
+                print("Do nothing")
                 pass
             robot_start = False
             robot_status = False
@@ -374,8 +371,8 @@ if __name__ == '__main__':
         robot_start = False
         robot_status = False
         distance_margin = 0.1            # 현재위치와 Patrol point 사이의 허용오차
-        rate_main_while = rospy.Rate(2)  # while문 속도 제어를 위한 변수
         rate_temp= rospy.Rate(10)
+        rate_main_while = rospy.Rate(2)  # while문 속도 제어를 위한 변수
         #---------------------Set publisher & subscriber----------
         # 3 Publisher: 
         #   1) Twist:turtlebot 제자리 회전을 위해 위해 필요
@@ -385,7 +382,6 @@ if __name__ == '__main__':
         #   1) Mode: 현재 모드를 업데이트 하기 위해 필요
         #   2) current_pose: 로봇의 현재 위치를 알기 위해 필요
         pub_twist = rospy.Publisher('cmd_vel', Twist, queue_size=10)
-        # pub_stop_signal = rospy.Publisher('stop_signal',Int64,queue_size =10)
         pub_destination = rospy.Publisher('set_robot_destination', PoseStamped, queue_size=10)
         pub_stop_destination = rospy.Publisher('set_robot_destination', PoseStamped, queue_size=10)
 

@@ -3,9 +3,9 @@
 
 
 import rospy
-from geometry_msgs.msg import PoseWithCovarianceStamped,PoseStamped
-from tf.transformations import quaternion_from_euler
 from nav_msgs.msg import Odometry
+from tf.transformations import quaternion_from_euler
+from geometry_msgs.msg import PoseWithCovarianceStamped,PoseStamped
 
 
 def current_pose_callback(odom_data):
@@ -49,8 +49,8 @@ def is_same_postion(initial_position,current_position):
 # ---------------------------------------------------------------------------- #
 rospy.init_node('Initial_pose', anonymous=False)
 
-pub = rospy.Publisher('/initialpose', PoseWithCovarianceStamped, queue_size = 10)
 rospy.Subscriber('/odom', Odometry, current_pose_callback)
+pub = rospy.Publisher('/initialpose', PoseWithCovarianceStamped, queue_size = 10)
 
 
 rate = rospy.Rate(1)
