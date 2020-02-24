@@ -1,0 +1,7 @@
+<launch>
+  
+  <node pkg="turson" name="mode_control" type="mode_control.py"></node>
+  <node pkg="turson" name="navigation_mode" type="navigation_mode.py"></node>
+  <node pkg="turson" name="patrol_mode" type="patrol_mode.py"></node>
+  
+</launch>
