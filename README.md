@@ -20,7 +20,7 @@ TURSON Project
 |Robot|Turtlebot3_waffle|
 
 [Turtlebot e-Manual](http://emanual.robotis.com/docs/en/platform/turtlebot3/overview/)의 내용이 전부 실행가능함을 전제로 합니다.  
-
+[Darknet ROS](https://github.com/ingjae/darknet_ros_jetson_tx2) Object detection을 위해 darknet ros 역시 실행가능함을 전제합니다.
 ---
 ## 1.1. 실행 영상
 [![Turson](https://img.youtube.com/vi/9e2xosJy2Ts/0.jpg)](https://www.youtube.com/watch?v=9e2xosJy2Ts) 
