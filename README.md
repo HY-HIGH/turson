@@ -32,7 +32,7 @@ TURSON Project
 Node 실행시 만들어지는 rqt graph입니다.
 
 <!-- 인재에게 스크린샷 요청 -->
-![Rqt_graph](./image/rosgraph.png)
+![Rqt_graph](./image/rosgraph_color.png)
 
 ### 1.2.2 구조 설명
 
@@ -52,8 +52,6 @@ Node 실행시 만들어지는 rqt graph입니다.
 #### 1.2.3.1 roslaunch 실행방법
 [update] roslaunch 명령어로 기존의 실행방법을 간소화했습니다.
 >[1번 터미널] roslaunch turson turson.launch  
->[2번 터미널] rosrun turson patrol_mod.launch   
->[3번 터미널] ros  
->[4번 터미널]    
->[5번 터미널]  
+>[2번 터미널] roslaunch turson mode.launch  
+>[3번 터미널] roslaunch darknet_ros darknet_ros.launch
 
