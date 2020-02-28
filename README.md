@@ -19,12 +19,18 @@ TURSON Project
 |MCU|OpenCR, Nvidia Jetson Tx2|
 |Robot|Turtlebot3_waffle|
 
-[Turtlebot e-Manual](http://emanual.robotis.com/docs/en/platform/turtlebot3/overview/)의 내용이 전부 실행가능함을 전제로 합니다.  
-[Darknet ROS](https://github.com/ingjae/darknet_ros_jetson_tx2) Object detection을 위해 darknet ros 역시 실행가능함을 전제합니다.
----
-## 1.1. 실행 영상
-[![Turson](https://img.youtube.com/vi/9e2xosJy2Ts/0.jpg)](https://www.youtube.com/watch?v=9e2xosJy2Ts) 
+아래의 내용이 전부 실행가능함을 전제로 합니다.  
+1.[Turtlebot e-Manual](http://emanual.robotis.com/docs/en/platform/turtlebot3/overview/)    
+2.[Darknet ROS](https://github.com/ingjae/darknet_ros_jetson_tx2)
 
+---
+## 1.1. 영상 
+### 1.1.1. 자율안전 로봇 시뮬레이션
+[![Simulation](https://img.youtube.com/vi/9e2xosJy2Ts/0.jpg)](https://www.youtube.com/watch?v=9e2xosJy2Ts)
+### 1.1.2. Gmapping test
+[![Gmapping test](https://img.youtube.com/vi/Ke1WHCdHJag/0.jpg)](https://www.youtube.com/watch?v=Ke1WHCdHJag) 
+### 1.1.3. Navigation test
+[![Navigation test](https://img.youtube.com/vi/6AQ4OooEAmc/0.jpg)](https://www.youtube.com/watch?v=6AQ4OooEAmc) 
 
 - - -
 ## 1.2. Package 설명
