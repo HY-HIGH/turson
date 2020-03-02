@@ -54,13 +54,13 @@ def status_callback(result):
 def go_patrol_point(x,y):
     global switch_patrol 
     if (switch_patrol == 0):
-        yaw = math.radians(90)
+        yaw = math.radians(135)
     elif (switch_patrol == 1):
-        yaw = math.radians(180)
+        yaw = math.radians(45)
     elif (switch_patrol == 2):
-        yaw = math.radians(270)
+        yaw = math.radians(315)
     else :
-        yaw = math.radians(360)
+        yaw = math.radians(315)
 
     robot_orient = Quaternion(*quaternion_from_euler(0,0,yaw))
     robot_destination = PoseStamped() 
@@ -120,13 +120,13 @@ def rotate_callibrate():
     global switch_patrol
     global current_pose
     if switch_patrol == 0:
-        yaw = math.radians(270)
+        yaw = math.radians(135)
     elif switch_patrol == 1:
-        yaw = math.radians(360)
+        yaw = math.radians(45)
     elif switch_patrol == 2:
-        yaw = math.radians(90)
+        yaw = math.radians(315)
     else :
-        yaw = math.radians(180)
+        yaw = math.radians(315)
     rate_temp = rospy.Rate(10)
 
     while True:
