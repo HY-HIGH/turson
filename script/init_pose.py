@@ -61,8 +61,8 @@ margin = 0.2
 # ---------------------------------------------------------------------------- #
 #                              Initialize setpoint                             #
 # ---------------------------------------------------------------------------- #
-checkpoint.pose.pose.position.x = -2.0
-checkpoint.pose.pose.position.y = -0.5
+checkpoint.pose.pose.position.x = 0.0#-2.0
+checkpoint.pose.pose.position.y = 0.0#-0.5
 checkpoint.pose.pose.position.z = 0.0
 
 [x,y,z,w]=quaternion_from_euler(0.0,0.0,0.0)

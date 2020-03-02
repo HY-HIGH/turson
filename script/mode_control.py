@@ -58,12 +58,14 @@ def cb_bounding_box(image_data):
 def mode_converter():
     global person_detect
     global robot_status
-    enough_distance = 120000
+    too_far_distance = 5000
+    enough_distance = 75000
 
     if person_detect == 1: #사람이 검출
-        if global_box_size > enough_distance: # 사람이 가까이 있을 때
+        if too_far_distance < global_box_size < enough_distance: # 사람이 가까이 있을 때
             print('over box_size')
             person_detect = 0
+            # 가까운건 경고음 멀리있는건 패스
             # 경고음
         # nav_once 0: 네비게이션 도착 전
         elif (global_box_size < enough_distance) and (rospy.get_param('nav_once') == 1): # 사람이 충분히 멀리 있고 // 도착했을 때
@@ -90,10 +92,10 @@ def detection_image_centralize():
     # 즉, 로봇이 대상을 정면으로 볼 때까지 계속 위치제어
     while True:
         global global_x_mid
-        if global_x_mid < 0.45:
+        if global_x_mid <= 0.45:
             angular_velocity = 1
     
-        elif global_x_mid > 0.55:
+        elif global_x_mid >= 0.55:
             angular_velocity = -1
         
         else :
@@ -105,7 +107,7 @@ def detection_image_centralize():
         pub_twist.publish(twist)
 
         print("x_mid",global_x_mid)
-        if global_x_mid > 0.45 and global_x_mid < 0.55 : # xmid 가 0.5 가되면 정지
+        if 0.45 < global_x_mid < 0.55 : # xmid 가 0.5 가되면 정지
             twist.angular.x = 0
             twist.angular.y = 0
             twist.angular.z = 0

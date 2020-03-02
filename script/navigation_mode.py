@@ -169,12 +169,29 @@ def calculate_coordinate():
     
     return cal_position_x,cal_position_y    
 
-def box_size_2_distance():
+def box_size_2_distance(): # 박스크기가 5000 이하나 75000이상이면 패스 
     print ('box_size :',global_box_size)
-
-    distance_factor = 0.000001             # 박스 사이즈 값에 따른 거리 비율 # 수정 필요 .작을 수록 가까이 가야한다.
-    #distance_person = distance_factor * global_box_size
-    distance_person = 0.6
+   
+    if 5000 <= global_box_size < 6500 : 
+        distance_person = 5.5
+    elif 6500 <= global_box_size < 7500 : 
+        distance_person = 5.0
+    elif 7500 <= global_box_size < 10500 : 
+        distance_person = 4.5
+    elif 10500 <= global_box_size < 13000 : 
+        distance_person = 4.0
+    elif 13000 <= global_box_size < 21000 : 
+        distance_person = 3.5
+    elif 21000 <= global_box_size < 25000 : 
+        distance_person = 3.0    
+    elif 25000 <= global_box_size < 33000 : 
+        distance_person = 2.5
+    elif 33000 <= global_box_size < 45000 : 
+        distance_person = 2.0
+    elif 45000 <= global_box_size < 75000 : 
+        distance_person = 1.5
+    else :
+        pass
     
     return distance_person
 

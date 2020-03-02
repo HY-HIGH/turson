@@ -331,7 +331,7 @@ def patrol_mode():
             temp_finished  = False
         else:
             print("Image centralizeing...: %d"%rospy.get_param('mode'))
-           
+            print("temp_finished:{} robot_status:{}".format(temp_finished,robot_status))
             if temp_finished == False:
                 if robot_status == False:
                     print("Try to stop robot..."*10)
@@ -366,8 +366,10 @@ if __name__ == '__main__':
         current_mode = 0                 # 현재 동작 모드 실시간 update
         current_pose = PoseStamped()     # 현재 로봇의 위치 실시간 update
         
-        BOTTOM_LEFT = [-2,0.5]; BOTTOM_RIGHT = [-2,-0.5]; TOP_LEFT = [0.5,0.5]; TOP_RIGHT = [0.5,-0.5] # Patrol point 
+        # BOTTOM_LEFT = [-2,0.5]; BOTTOM_RIGHT = [-2,-0.5]; TOP_LEFT = [0.5,0.5]; TOP_RIGHT = [0.5,-0.5] # Patrol point 
+        BOTTOM_LEFT = [-2,3]; BOTTOM_RIGHT = [0,0]; TOP_LEFT = [-5,-3]; TOP_RIGHT = [4,-2] # Patrol point 
         
+
         robot_start = False
         robot_status = False
         distance_margin = 0.1            # 현재위치와 Patrol point 사이의 허용오차
