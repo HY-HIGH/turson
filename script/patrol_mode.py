@@ -330,19 +330,23 @@ def patrol_mode():
             robot_status = False
             temp_finished  = False
         else:
-            print("Image centralizeing...: %d"%rospy.get_param('mode'))
-            print("temp_finished:{} robot_status:{}".format(temp_finished,robot_status))
-            if temp_finished == False:
-                if robot_status == False:
-                    print("Try to stop robot..."*10)
-                    pub_stop_destination.publish(current_pose)
-                else:
-                    print("Robot stopped!")
-                    rospy.set_param('stop_signal',1)
-                    temp_finished = True
+            print("Image centralizeing...: %d"%rospy.get_param('mode')) # 사람 검출 진입 2번 모드
+            print("temp_finished:{} robot_status:{}".format(temp_finished,robot_status)) # F F
+            if temp_finished == False:#로봇이 멈출때 까지 실행
+                if robot_status == False: #1
+                    while True:
+                        stop_rate = rospy.Rate(1)
+                        print("Try to stop robot...") # 갖혀있음####
+                        pub_stop_destination.publish(current_pose)
+                        if robot_status == True:
+                            print("Robot stopped!") #2
+                            temp_finished = True
+                            rospy.set_param('stop_signal',1) #네비게이션 모드 진입
+                            break
+                        stop_rate.sleep()
             else:
-                print("Do nothing")
-                pass
+                print("Do nothing") #3
+                
             robot_start = False
             robot_status = False
         rate_main_while.sleep()
