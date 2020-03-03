@@ -14,6 +14,7 @@
   <!-- <node pkg="turson" name="init_pose" type="init_pose.py"></node> -->
   <node pkg="turson" name="move_turson" type="move_turson.py"></node>
   <node pkg="turson" name="turson_box_data" type="turson_box_data.py"></node>
+  <node pkg="turson" name="real_pose" type="real_pose.py"></node>
   
   <!-- <include file="$(find turson)/launch/init_pose.launch"></include> -->
   <!-- <include file="$(find patrol_mode)/launch/move_robot.launch"></include> -->

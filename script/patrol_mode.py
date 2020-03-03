@@ -54,13 +54,13 @@ def status_callback(result):
 def go_patrol_point(x,y):
     global switch_patrol 
     if (switch_patrol == 0):
-        yaw = math.radians(135)
+        yaw = math.radians(90)
     elif (switch_patrol == 1):
-        yaw = math.radians(45)
+        yaw = math.radians(180)
     elif (switch_patrol == 2):
-        yaw = math.radians(315)
+        yaw = math.radians(270)
     else :
-        yaw = math.radians(315)
+        yaw = math.radians(360)
 
     robot_orient = Quaternion(*quaternion_from_euler(0,0,yaw))
     robot_destination = PoseStamped() 
@@ -120,13 +120,13 @@ def rotate_callibrate():
     global switch_patrol
     global current_pose
     if switch_patrol == 0:
-        yaw = math.radians(135)
+        yaw = math.radians(270)
     elif switch_patrol == 1:
-        yaw = math.radians(45)
+        yaw = math.radians(360)
     elif switch_patrol == 2:
-        yaw = math.radians(315)
+        yaw = math.radians(90)
     else :
-        yaw = math.radians(315)
+        yaw = math.radians(180)
     rate_temp = rospy.Rate(10)
 
     while True:
@@ -335,8 +335,10 @@ def patrol_mode():
             if temp_finished == False:#로봇이 멈출때 까지 실행
                 if robot_status == False: #1
                     while True:
-                        stop_rate = rospy.Rate(1)
+                        stop_rate = rospy.Rate(10)
                         print("Try to stop robot...") # 갖혀있음####
+                        print('robot_status:{}'.format(robot_status))
+                        print(current_pose);print('='*5)
                         pub_stop_destination.publish(current_pose)
                         if robot_status == True:
                             print("Robot stopped!") #2
@@ -371,7 +373,8 @@ if __name__ == '__main__':
         current_pose = PoseStamped()     # 현재 로봇의 위치 실시간 update
         
         # BOTTOM_LEFT = [-2,0.5]; BOTTOM_RIGHT = [-2,-0.5]; TOP_LEFT = [0.5,0.5]; TOP_RIGHT = [0.5,-0.5] # Patrol point 
-        BOTTOM_LEFT = [-2,3]; BOTTOM_RIGHT = [0,0]; TOP_LEFT = [-5,-3]; TOP_RIGHT = [4,-2] # Patrol point 
+        #BOTTOM_LEFT = [-2,3]; BOTTOM_RIGHT = [0,0]; TOP_LEFT = [-5,-3]; TOP_RIGHT = [4,-2] # Patrol point 
+        BOTTOM_LEFT = [6,0]; BOTTOM_RIGHT = [0,0]; TOP_LEFT = [4,0]; TOP_RIGHT = [2,0] # Patrol point 
         
 
         robot_start = False
