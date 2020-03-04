@@ -63,16 +63,26 @@ def mode_converter():
     enough_distance = 75000 #1.5m
 
     if person_detect == 1: #사람이 검출
-        if  global_box_size > enough_distance: # 사람이 가까이 있을 때
+        if  global_box_size > enough_distance: # 사람이 가까이 있을 때 
             print('over box_size')
             person_detect = 0
             # 패트롤 전환 해줘야 함
-            # 가까운건 경고음 
-            # 경고음
-        # nav_once 0: 네비게이션 도착 전
+
+            # 갑자기 사람이 잡히면 // 패트롤
+            # 네비게이션 이후 에도 // 패트롤
+            rospy.set_param('mode',0) # 패트롤
+
+            rospy.set_param('navigation_status',0)  # 네비게이션 초기화
+            rospy.set_param('nav_once',1)           # 네비게이션 초기화
+            
+        # nav_once = 0: 네비게이션 도착 전
         elif global_box_size < too_far_distance:
             print('too small')
             person_detect = 0
+            rospy.set_param('mode',0) # 패트롤
+
+            rospy.set_param('navigation_status',0)  # 네비게이션 초기화
+            rospy.set_param('nav_once',1)           # 네비게이션 초기화
             #멀리있는건 패스
 
         elif (too_far_distance <= global_box_size <= enough_distance) and (rospy.get_param('nav_once') == 1): # 사람이 충분히 멀리 있고 // 도착했을 때

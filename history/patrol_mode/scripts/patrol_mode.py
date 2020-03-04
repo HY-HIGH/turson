@@ -30,9 +30,9 @@ def mode_callback(mode):
 #  - X-Y-Z 좌표 
 #  - 로봇의 헤드 방향(Orientation)
 # ---------------------------------------------------------------------------- #
-def current_pose_callback(real_pose):
+def current_pose_callback(odom_data):
     global current_pose
-    current_pose = real_pose
+    current_pose.pose = odom_data.pose.pose
 
 # ---------------------------------------------------------------------------- #
 #                     Current robot status realtime update                     #
@@ -54,13 +54,13 @@ def status_callback(result):
 def go_patrol_point(x,y):
     global switch_patrol 
     if (switch_patrol == 0):
-        yaw = math.radians(0)
+        yaw = math.radians(90)
     elif (switch_patrol == 1):
-        yaw = math.radians(0)
-    elif (switch_patrol == 2):
         yaw = math.radians(180)
+    elif (switch_patrol == 2):
+        yaw = math.radians(270)
     else :
-        yaw = math.radians(0)
+        yaw = math.radians(360)
 
     robot_orient = Quaternion(*quaternion_from_euler(0,0,yaw))
     robot_destination = PoseStamped() 
@@ -73,8 +73,8 @@ def go_patrol_point(x,y):
     robot_destination.pose.orientation.y = robot_orient.y
     robot_destination.pose.orientation.z = robot_orient.z
     robot_destination.pose.orientation.w = robot_orient.w
-    pub_destination.publish(robot_destination)
     print("x_target:{} y_target:{}".format(x,y))
+    pub_destination.publish(robot_destination)
 
 # ---------------------------------------------------------------------------- #
 #                             Get current position                             #
@@ -114,17 +114,17 @@ def rotating_mission(second):
             pub_twist.publish(twist)
             break
         rate_temp.sleep()
-        print("Patrol_Rotating...")
+        print("Rotating...");print('\n')
 
 def rotate_callibrate():
     global switch_patrol
     global current_pose
     if switch_patrol == 0:
-        yaw = math.radians(180)
+        yaw = math.radians(270)
     elif switch_patrol == 1:
-        yaw = math.radians(180)
-    elif switch_patrol == 2:
         yaw = math.radians(360)
+    elif switch_patrol == 2:
+        yaw = math.radians(90)
     else :
         yaw = math.radians(180)
     rate_temp = rospy.Rate(10)
@@ -136,11 +136,11 @@ def rotate_callibrate():
         current_yaw = euler[2]+math.pi
         if (abs((euler[2]+math.pi) - yaw)) < 0.3:
             twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = 0.0
-            print('='*15);print("Callibration finished!!!");print('='*15);print('\n')
+            print("Callibration finished!!!")
             pub_twist.publish(twist)
             break
         else: # 양수: 반시계방향 회전 | 음수: 시계방향 회전
-            twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = -0.1
+            twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = -1.0
             print("Callibrationing...")
             pub_twist.publish(twist)
 
@@ -167,13 +167,13 @@ def is_reached_position():
     if rospy.get_param('mode') == 2: # 이동 중에 대상이 포착된 경우 함수실행을 중지
         pass
     else:
-        print("robot_start",robot_start)
-        print("robot_status",robot_status)
+        # print("robot_start",robot_start)
+        # print("robot_status",robot_status)
         if (robot_start == False) and (robot_status == False): # 출발도 도착도 안했다면
-            position_timer(0.8)
+            position_timer(1.0)
             past_position = copy.deepcopy(current_pose.pose.position)
-            # print("past",past_position); print("="*15)
-            # print("current",current_pose.pose.position);print('\n'*3)
+            print("past",past_position); print("="*15)
+            print("current",current_pose.pose.position);print('\n'*3)
             
             while True:
                 if abs(past_position.x - current_pose.pose.position.x) > (distance_margin ) or \
@@ -222,10 +222,8 @@ def is_reached_position():
                 pass
             else:
                 switch_patrol_point()
-        else: 
-            robot_start  =  False
-            robot_status =  False
-
+        else: #출발은 안했는데 도착을 했으면? 말도 안되는 상황임
+            pass
                 
 
 # ---------------------------------------------------------------------------- #
@@ -267,7 +265,7 @@ def switch_patrol_point():
     else:
         x_goal = BOTTOM_RIGHT[0]
         y_goal = BOTTOM_RIGHT[1]
-    # print("switch_patrol:{} x_target:{} y_target:{}".format(switch_patrol,x_goal,y_goal))
+    print("switch_patrol:{} x_target:{} y_target:{}".format(switch_patrol,x_goal,y_goal))
 
 # ---------------------------------------------------------------------------- #
 #          calculate_shortest_distance_between_robot_and_patrol_point          #
@@ -320,35 +318,29 @@ def patrol_mode():
         global robot_status
         global robot_start
         if rospy.get_param('mode') == 0 :
-            print("[Patrol mode]: %d"%rospy.get_param('mode'))
+            rospy.loginfo("Patrol mode activating: %d"%rospy.get_param('mode'))
             is_reached_position()
             temp_finished  = False
         elif rospy.get_param('mode') == 1:
-            print("[Navigation mode]: %d"%rospy.get_param('mode'))
+            rospy.loginfo("Patrol mode deactivating: %d"%rospy.get_param('mode'))
             calculate_shortest_distance_between_robot_and_patrol_point()
             robot_start = False
             robot_status = False
             temp_finished  = False
         else:
-            print("Image centralizeing...: %d"%rospy.get_param('mode')) # 사람 검출 진입 2번 모드
-            print("temp_finished:{} robot_status:{}".format(temp_finished,robot_status)) # F F
-            if temp_finished == False:#로봇이 멈출때 까지 실행
-                if robot_status == False: #1
-                    while True:
-                        stop_rate = rospy.Rate(10)
-                        print("Try to stop robot...") # 갖혀있음####
-                        print('robot_status:{}'.format(robot_status))
-                        print(current_pose);print('='*5)
-                        pub_stop_destination.publish(current_pose)
-                        if robot_status == True:
-                            print("Robot stopped!") #2
-                            temp_finished = True
-                            rospy.set_param('stop_signal',1) #네비게이션 모드 진입
-                            break
-                        stop_rate.sleep()
+            rospy.loginfo("Image centralizeing...: %d"%rospy.get_param('mode'))
+            # 주행 중, centralize가 걸리면,
+            # 제자리 회전 중, centralize가 걸리면
+            if temp_finished == False:
+                if robot_status == False:
+                    print("Try to stop robot...")
+                    pub_stop_destination.publish(current_pose)
+                else:
+                    print("Robot stopped!")
+                    temp_finished = True
             else:
-                print("Do nothing") #3
-                
+                print("I do nothing")
+                pass
             robot_start = False
             robot_status = False
         rate_main_while.sleep()
@@ -372,16 +364,13 @@ if __name__ == '__main__':
         current_mode = 0                 # 현재 동작 모드 실시간 update
         current_pose = PoseStamped()     # 현재 로봇의 위치 실시간 update
         
-        # BOTTOM_LEFT = [-2,0.5]; BOTTOM_RIGHT = [-2,-0.5]; TOP_LEFT = [0.5,0.5]; TOP_RIGHT = [0.5,-0.5] # Patrol point 
-        #BOTTOM_LEFT = [-2,3]; BOTTOM_RIGHT = [0,0]; TOP_LEFT = [-5,-3]; TOP_RIGHT = [4,-2] # Patrol point 
-        BOTTOM_LEFT = [6,0]; BOTTOM_RIGHT = [0,0]; TOP_LEFT = [4,0]; TOP_RIGHT = [2,0] # Patrol point 
+        BOTTOM_LEFT = [-2,0.5]; BOTTOM_RIGHT = [-2,-0.5]; TOP_LEFT = [0.5,0.5]; TOP_RIGHT = [0.5,-0.5] # Patrol point 
         
-
         robot_start = False
         robot_status = False
         distance_margin = 0.1            # 현재위치와 Patrol point 사이의 허용오차
-        rate_temp= rospy.Rate(10)
         rate_main_while = rospy.Rate(2)  # while문 속도 제어를 위한 변수
+        rate_temp= rospy.Rate(10)
         #---------------------Set publisher & subscriber----------
         # 3 Publisher: 
         #   1) Twist:turtlebot 제자리 회전을 위해 위해 필요
@@ -395,12 +384,11 @@ if __name__ == '__main__':
         pub_stop_destination = rospy.Publisher('set_robot_destination', PoseStamped, queue_size=10)
 
         rospy.Subscriber('mode_control',Int64, mode_callback) 
-        rospy.Subscriber('/real_pose', PoseStamped, current_pose_callback)
+        rospy.Subscriber('/odom', Odometry, current_pose_callback)
         rospy.Subscriber('/move_base/result',MoveBaseActionResult,status_callback)
         # ------------------Configuration varaibles------------------
-        angular_velocity = -0.1
-        rotate_time_second = 5.0
-        rospy.set_param('stop_signal',0)
+        angular_velocity = -1.0
+        rotate_time_second = 9.5
 # ---------------------------------------------------------------------------- #
 #                     Setup variables & main function call                     #
 # ---------------------------------------------------------------------------- #

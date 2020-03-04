@@ -275,10 +275,10 @@ def navigation():
                         global_result = False
                         rospy.set_param('navigation_status',0) #파라미터 변경
                         rospy.set_param('mode',0) #파라미터 변경
+                        rospy.set_param('nav_once',1)#네비게이션 한번만 모드  
+                        # 패트롤 모드로 진입 -> 박스크기가 일정이상이면 그대로 패트롤
 
                         # 여기에서 파라미터를 바꾸어 줄것인지?
-                        # 패트롤 모드로 진입 -> 박스크기가 일정이상이면 그대로 패트롤
-                        rospy.set_param('nav_once',1)#네비게이션 한번만 모드  
 
                         break
 

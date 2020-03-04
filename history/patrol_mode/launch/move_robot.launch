@@ -1,0 +1,7 @@
+<launch>
+  <!-- move_robot open -->
+  <node pkg="patrol_mode" name="Move_robot" type="move_robot.py" output="screen"></node>
+
+  <!-- rqt_graph open -->
+  <!-- <node pkg="rqt_graph" name="rqt_graph" type="rqt_graph"></node> -->
+</launch>

@@ -1,0 +1,5 @@
+<launch>
+  <!-- Patrol_mode open -->
+  <node pkg="patrol_mode" name="Patrol" type="patrol_mode.py" output="screen" ></node>
+  
+</launch>
