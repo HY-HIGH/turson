@@ -1,0 +1,11 @@
+<launch>
+  <!--<include file="$(find turtlebot3_bringup)/launch/turtlebot3_robot.launch"></include>-->
+  
+  <param name="mode" value="0" />
+
+  <node pkg="mode_control" name="main_talker" type="main_talker.py" output="screen"></node>
+  <node pkg="mode_control" name="talker1" type="talker.py" output="screen" launch-prefix="xterm -e"></node>
+  <node pkg="mode_control" name="talker2" type="talker2.py" launch-prefix="xterm -e"></node>
+  <node pkg="mode_control" name="main_listener" type="main_listener.py" launch-prefix="xterm -e"></node>
+  
+</launch>
