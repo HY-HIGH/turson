@@ -22,9 +22,9 @@ from tf.transformations import quaternion_from_euler,euler_from_quaternion  # �
 #  - X-Y-Z 좌표 
 #  - 로봇의 헤드 방향(Orientation)
 # ---------------------------------------------------------------------------- #
-def current_pose_callback(odom_data):
+def current_pose_callback(real_pose):
     global current_pose
-    current_pose.pose = odom_data.pose.pose
+    current_pose = real_pose
 
 # ---------------------------------------------------------------------------- #
 #                     Current robot status realtime update                     #
@@ -51,25 +51,33 @@ def cb_bounding_box(image_data):
     global_box_size     =  image_data.box_size
     #print ('box_size :',global_box_size)
     #print ('center? :',global_x_mid)
-    print('person detected')
+    print('person detected, size :{}'.format(global_box_size))
+    
     person_detect = 1
 
 # ---------------------------------------------------------------------------- #
 def mode_converter():
     global person_detect
     global robot_status
-    too_far_distance = 5000
-    enough_distance = 75000
+    too_far_distance = 5000 # 안정적으로 잡힐때
+    enough_distance = 75000 #1.5m
 
     if person_detect == 1: #사람이 검출
-        if too_far_distance < global_box_size < enough_distance: # 사람이 가까이 있을 때
+        if  global_box_size > enough_distance: # 사람이 가까이 있을 때
             print('over box_size')
             person_detect = 0
-            # 가까운건 경고음 멀리있는건 패스
+            # 패트롤 전환 해줘야 함
+            # 가까운건 경고음 
             # 경고음
         # nav_once 0: 네비게이션 도착 전
-        elif (global_box_size < enough_distance) and (rospy.get_param('nav_once') == 1): # 사람이 충분히 멀리 있고 // 도착했을 때
+        elif global_box_size < too_far_distance:
+            print('too small')
+            person_detect = 0
+            #멀리있는건 패스
+
+        elif (too_far_distance <= global_box_size <= enough_distance) and (rospy.get_param('nav_once') == 1): # 사람이 충분히 멀리 있고 // 도착했을 때
             rospy.set_param('mode',2)# 센트럴 라이징 모드 진입 
+            print ("image centrallizing")
             if rospy.get_param('stop_signal') == 1: #멈춰라! 멈춤신호 받으면
                 print('navigation mode')
 
@@ -92,11 +100,11 @@ def detection_image_centralize():
     # 즉, 로봇이 대상을 정면으로 볼 때까지 계속 위치제어
     while True:
         global global_x_mid
-        if global_x_mid <= 0.45:
-            angular_velocity = 1
+        if global_x_mid <= 0.40:
+            angular_velocity = 0.1
     
-        elif global_x_mid >= 0.55:
-            angular_velocity = -1
+        elif global_x_mid >= 0.6:
+            angular_velocity = -0.1
         
         else :
             angular_velocity = 0
@@ -107,7 +115,7 @@ def detection_image_centralize():
         pub_twist.publish(twist)
 
         print("x_mid",global_x_mid)
-        if 0.45 < global_x_mid < 0.55 : # xmid 가 0.5 가되면 정지
+        if 0.40 < global_x_mid < 0.60 : # xmid 가 0.5 가되면 정지
             twist.angular.x = 0
             twist.angular.y = 0
             twist.angular.z = 0
@@ -135,7 +143,8 @@ if __name__ == '__main__':
         pub_mode = rospy.Publisher('mode_control', Int64, queue_size=10)    # 모드전환
 
         rospy.Subscriber('/box_data',Box_data,cb_bounding_box)              # Person detection 데이터 수신
-        rospy.Subscriber('/odom', Odometry, current_pose_callback)          # 로봇의 현재위치 확인
+        # rospy.Subscriber('/odom', Odometry, current_pose_callback)          # 로봇의 현재위치 확인
+        rospy.Subscriber('/real_pose', PoseStamped, current_pose_callback)          # 로봇의 현재위치 확인
 
     #--------------------Setup parameter-----------------
         rospy.set_param('mode',0)                                           # 로봇의 모드값 변환

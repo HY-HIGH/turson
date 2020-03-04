@@ -30,9 +30,9 @@ def mode_callback(mode):
 #  - X-Y-Z 좌표 
 #  - 로봇의 헤드 방향(Orientation)
 # ---------------------------------------------------------------------------- #
-def current_pose_callback(odom_data):
+def current_pose_callback(real_pose):
     global current_pose
-    current_pose.pose = odom_data.pose.pose
+    current_pose = real_pose
 
 # ---------------------------------------------------------------------------- #
 #                     Current robot status realtime update                     #
@@ -140,7 +140,7 @@ def rotate_callibrate():
             pub_twist.publish(twist)
             break
         else: # 양수: 반시계방향 회전 | 음수: 시계방향 회전
-            twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = -1.0
+            twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = -0.1
             print("Callibrationing...")
             pub_twist.publish(twist)
 
@@ -395,10 +395,10 @@ if __name__ == '__main__':
         pub_stop_destination = rospy.Publisher('set_robot_destination', PoseStamped, queue_size=10)
 
         rospy.Subscriber('mode_control',Int64, mode_callback) 
-        rospy.Subscriber('/odom', Odometry, current_pose_callback)
+        rospy.Subscriber('/real_pose', PoseStamped, current_pose_callback)
         rospy.Subscriber('/move_base/result',MoveBaseActionResult,status_callback)
         # ------------------Configuration varaibles------------------
-        angular_velocity = -1.0
+        angular_velocity = -0.1
         rotate_time_second = 5.0
         rospy.set_param('stop_signal',0)
 # ---------------------------------------------------------------------------- #

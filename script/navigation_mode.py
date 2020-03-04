@@ -25,12 +25,12 @@ global_result                   = False # 도착 여부
 global_navigation_status        = 0 # 0: deactivated 1: activated
 
 # 순간 오도메트리 
-global_temp_position_x          = 0     
-global_temp_position_y          = 0         
-global_temp_orientation_x       = 0
-global_temp_orientation_y       = 0
-global_temp_orientation_z       = 0
-global_temp_orientation_w       = 0
+# global_temp_position_x          = 0     
+# global_temp_position_y          = 0         
+# global_temp_orientation_x       = 0
+# global_temp_orientation_y       = 0
+# global_temp_orientation_z       = 0
+# global_temp_orientation_w       = 0
 
 # 박스 정보
 global_x_mid                    = 0
@@ -38,15 +38,18 @@ global_box_size                 = 0
 global_box_count                = 0  
 
 # 현재 오도메트리
-global_current_position_x       = 0   
-global_current_position_y       = 0     
-global_current_orientation_x    = 0  
-global_current_orientation_y    = 0  
-global_current_orientation_z    = 0  
-global_current_orientation_w    = 0
+# global_current_position_x       = 0   
+# global_current_position_y       = 0     
+# global_current_orientation_x    = 0  
+# global_current_orientation_y    = 0  
+# global_current_orientation_z    = 0  
+# global_current_orientation_w    = 0
 
+current_pose                    = 0
 #==================== callback 함수 (업데이트) ==================== 
-
+def cb_real_pose(real_pose):
+    global current_pose
+    current_pose = real_pose
 # 현재 메인 모드 업데이트 ([모드 컨트롤 노드] 모드)       
 def cb_mode(mode):                        
     global global_mode
@@ -54,21 +57,21 @@ def cb_mode(mode):
     print ('mode : ',global_mode)
 
 # 순간 오도메트리 업데이트 # Odometry msg
-def cb_temp_odometry(temp_odom_data):      
+# def cb_temp_odometry(temp_odom_data):      
 
-    global global_temp_position_x  
-    global global_temp_position_y 
-    global global_temp_orientation_x  
-    global global_temp_orientation_y  
-    global global_temp_orientation_z  
-    global global_temp_orientation_w  
+#     global global_temp_position_x  
+#     global global_temp_position_y 
+#     global global_temp_orientation_x  
+#     global global_temp_orientation_y  
+#     global global_temp_orientation_z  
+#     global global_temp_orientation_w  
 
-    global_temp_position_x       = temp_odom_data.pose.pose.position.x
-    global_temp_position_y       = temp_odom_data.pose.pose.position.y 
-    global_temp_orientation_x    = temp_odom_data.pose.pose.orientation.x 
-    global_temp_orientation_y    = temp_odom_data.pose.pose.orientation.y 
-    global_temp_orientation_z    = temp_odom_data.pose.pose.orientation.z 
-    global_temp_orientation_w    = temp_odom_data.pose.pose.orientation.w 
+#     global_temp_position_x       = temp_odom_data.pose.pose.position.x
+#     global_temp_position_y       = temp_odom_data.pose.pose.position.y 
+#     global_temp_orientation_x    = temp_odom_data.pose.pose.orientation.x 
+#     global_temp_orientation_y    = temp_odom_data.pose.pose.orientation.y 
+#     global_temp_orientation_z    = temp_odom_data.pose.pose.orientation.z 
+#     global_temp_orientation_w    = temp_odom_data.pose.pose.orientation.w 
 
 # 바운딩 박스 업데이트   
 def cb_bounding_box(image_data): #image_data 객체 리스트
@@ -82,27 +85,27 @@ def cb_bounding_box(image_data): #image_data 객체 리스트
 
     
 #현재 오도메트리 정보 업데이트 [불필요]
-def cb_odometry(odom_data): # 현재 위치를 current_ 로 정의 후 global에 저장
-    # 수정할 변수
-    #글로벌로 쓰지 않으려면 퍼블리시 하는 함수로 짜야한다.
-    global global_current_position_x  
-    global global_current_position_y  
-    global global_current_orientation_x  
-    global global_current_orientation_y  
-    global global_current_orientation_z  
-    global global_current_orientation_w  
+# def cb_odometry(odom_data): # 현재 위치를 current_ 로 정의 후 global에 저장
+#     # 수정할 변수
+#     #글로벌로 쓰지 않으려면 퍼블리시 하는 함수로 짜야한다.
+#     global global_current_position_x  
+#     global global_current_position_y  
+#     global global_current_orientation_x  
+#     global global_current_orientation_y  
+#     global global_current_orientation_z  
+#     global global_current_orientation_w  
 
-    global_current_position_x       =  odom_data.pose.pose.position.x
-    global_current_position_y       =  odom_data.pose.pose.position.y
-    global_current_orientation_x    =  odom_data.pose.pose.orientation.x 
-    global_current_orientation_y    =  odom_data.pose.pose.orientation.y 
-    global_current_orientation_z    =  odom_data.pose.pose.orientation.z 
-    global_current_orientation_w    =  odom_data.pose.pose.orientation.w 
+#     global_current_position_x       =  odom_data.pose.pose.position.x
+#     global_current_position_y       =  odom_data.pose.pose.position.y
+#     global_current_orientation_x    =  odom_data.pose.pose.orientation.x 
+#     global_current_orientation_y    =  odom_data.pose.pose.orientation.y 
+#     global_current_orientation_z    =  odom_data.pose.pose.orientation.z 
+#     global_current_orientation_w    =  odom_data.pose.pose.orientation.w 
 
 # 네비게이션 상태 업데이트[불필요]  파라미터로 대체
-def cb_navigation_status(status):
-    global global_navigation_status
-    global_navigation_status = status.data 
+# def cb_navigation_status(status):
+#     global global_navigation_status
+#     global_navigation_status = status.data 
 
 # 결과 업데이트 (도착시 메인 모드 0으로 바꾸어 준다)
 def cb_result(result):
@@ -116,19 +119,19 @@ def cb_result(result):
 
 #==================== 커스텀 함수 ====================
 # 로봇 초기화 함수 [코딩 중...][필요없음]
-def initialize():
-    pub_initialize = rospy.Publisher('/set_robot_destination', PoseStamped, queue_size = 10) #로봇의 목적지 퍼블리시
+# def initialize():
+#     pub_initialize = rospy.Publisher('/set_robot_destination', PoseStamped, queue_size = 10) #로봇의 목적지 퍼블리시
 
-    robot_initialize = PoseStamped()  # 객체 선언 
-    robot_initialize.pose.position.x = global_current_position_x
-    robot_initialize.pose.position.y = global_current_position_y
-    robot_initialize.pose.position.z = 0.0
-    robot_initialize.pose.orientation.x = global_current_orientation_x  
-    robot_initialize.pose.orientation.y = global_current_orientation_y  
-    robot_initialize.pose.orientation.z = global_current_orientation_z  
-    robot_initialize.pose.orientation.w = global_current_orientation_w  
+#     robot_initialize = PoseStamped()  # 객체 선언 
+#     robot_initialize.pose.position.x = global_current_position_x
+#     robot_initialize.pose.position.y = global_current_position_y
+#     robot_initialize.pose.position.z = 0.0
+#     robot_initialize.pose.orientation.x = global_current_orientation_x  
+#     robot_initialize.pose.orientation.y = global_current_orientation_y  
+#     robot_initialize.pose.orientation.z = global_current_orientation_z  
+#     robot_initialize.pose.orientation.w = global_current_orientation_w  
                 
-    pub_initialize.publish(robot_initialize)      # 퍼블리시 할 항목
+#     pub_initialize.publish(robot_initialize)      # 퍼블리시 할 항목
 
 # 로봇의 로컬 좌표를 글로벌 좌표계에서 쓸수있도록 변환
 def angle_transform():
@@ -150,10 +153,10 @@ def angle_transform():
 
 # 현재 로봇의 방향을 쿼터니안에서 라디안 (오일러)값으로 리턴[return current_orient]
 def current_radian():
-    current_x = global_temp_orientation_x
-    current_y = global_temp_orientation_y
-    current_z = global_temp_orientation_z
-    current_w = global_temp_orientation_w
+    current_x = current_pose.pose.orientation.x
+    current_y = current_pose.pose.orientation.y
+    current_z = current_pose.pose.orientation.z
+    current_w = current_pose.pose.orientation.w
     current_orient = Vector3(*euler_from_quaternion([current_x,current_y,current_z,current_w]))# * : positional argument 만 받겟다 
     return current_orient # Vector3
 
@@ -164,8 +167,8 @@ def calculate_coordinate():
 
     transformed_angle = angle_transform() # 글로벌 좌표계에 맞는 좌표로 변환 # 라디안 값으로 변환 
 
-    cal_position_x = (global_temp_position_x  + (distance_person * math.cos(transformed_angle)))
-    cal_position_y = (global_temp_position_y  + (distance_person * math.sin(transformed_angle)))
+    cal_position_x = (current_pose.pose.position.x  + (distance_person * math.cos(transformed_angle)))
+    cal_position_y = (current_pose.pose.position.y  + (distance_person * math.sin(transformed_angle)))
     
     return cal_position_x,cal_position_y    
 
@@ -214,12 +217,13 @@ def navigation():
     rospy.init_node('navigation', anonymous=False)                                           # 노드 초기화 #노드이름
     
     pub_destination = rospy.Publisher('/set_robot_destination', PoseStamped, queue_size = 10) #로봇의 목적지 퍼블리시
-    pub_temp_odom = rospy.Publisher('/temp_odom', PoseStamped, queue_size = 10)               #그 순간의 오도메트리 발행
-    rospy.Subscriber('/odom',Odometry,cb_odometry)
+    #pub_temp_odom = rospy.Publisher('/temp_odom', PoseStamped, queue_size = 10)               #그 순간의 오도메트리 발행
+    # rospy.Subscriber('/odom',Odometry,cb_odometry)
     rospy.Subscriber('mode_control',Int64,cb_mode)                          # 메인 노드 : 사람 검출 여부 계속 서브 스크라이브 
     rospy.Subscriber('/move_base/result',MoveBaseActionResult,cb_result)    # 목적지 도착 여부 계속 서브스크라이브
     rospy.Subscriber('/box_data',Box_data,cb_bounding_box)
-    rospy.Subscriber('/odom',Odometry,cb_temp_odometry)
+    # rospy.Subscriber('/odom',Odometry,cb_temp_odometry)
+    rospy.Subscriber('/real_pose',PoseStamped,cb_real_pose)
 
     rospy.set_param('navigation_status',0) #파라미터 변경
 
@@ -248,10 +252,10 @@ def navigation():
                     robot_destination.pose.position.x = cal_x
                     robot_destination.pose.position.y = cal_y
                     robot_destination.pose.position.z = 0.0
-                    robot_destination.pose.orientation.x = global_temp_orientation_x  
-                    robot_destination.pose.orientation.y = global_temp_orientation_y  
-                    robot_destination.pose.orientation.z = global_temp_orientation_z  
-                    robot_destination.pose.orientation.w = global_temp_orientation_w  
+                    robot_destination.pose.orientation.x = current_pose.pose.orientation.x 
+                    robot_destination.pose.orientation.y = current_pose.pose.orientation.y 
+                    robot_destination.pose.orientation.z = current_pose.pose.orientation.z 
+                    robot_destination.pose.orientation.w = current_pose.pose.orientation.w 
                     global_result = False
                     pub_destination.publish(robot_destination)      # 퍼블리시 할 항목
                     rospy.set_param('nav_once',0)
@@ -264,7 +268,7 @@ def navigation():
                     if global_result == True: # 도착하면
                         #정지 코드 [필요없을듯]
                         print ("========parameter change========")
-                        print ("========Patrol Mode========")
+                        print ("========Patrol Mode========"    )
 
                         
                         #stop_robot()
