@@ -88,11 +88,11 @@ def mode_converter():
 
         elif (too_far_distance <= global_box_size <= enough_distance) and (rospy.get_param('nav_once') == 1): # 사람이 충분히 멀리 있고 // 도착했을 때
             rospy.set_param('mode',2)# 센트럴 라이징 모드 진입 
-            print('Approach To Person  ')
+            print('Approach To Person')
             
             if rospy.get_param('stop_signal') == 1: #멈춰라! 멈춤신호 받으면
 
-                detection_image_centralize()# 중심에 맞추고 중심에 오면 #네비게이션 엑티베이트   
+                detection_image_centrddalize()# 중심에 맞추고 중심에 오면 #네비게이션 엑티베이트   
                 print('[Centralize] : Centralize Finished')
                 rospy.set_param('mode',1)#네비게이션 모드
 
@@ -103,7 +103,7 @@ def mode_converter():
                 pass
         else:
             pass
-    else :
+    else :#사람이 검출되지 않음
         print(': No Person , Safe')
 
 # ---------------------------------------------------------------------------- #
