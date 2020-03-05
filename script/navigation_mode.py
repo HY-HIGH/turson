@@ -24,26 +24,14 @@ global_mode                     = 0
 global_result                   = False # 도착 여부
 global_navigation_status        = 0 # 0: deactivated 1: activated
 
-# 순간 오도메트리 
-# global_temp_position_x          = 0     
-# global_temp_position_y          = 0         
-# global_temp_orientation_x       = 0
-# global_temp_orientation_y       = 0
-# global_temp_orientation_z       = 0
-# global_temp_orientation_w       = 0
+
 
 # 박스 정보
 global_x_mid                    = 0
 global_box_size                 = 0 
 global_box_count                = 0  
 person_detected                 = 0
-# 현재 오도메트리
-# global_current_position_x       = 0   
-# global_current_position_y       = 0     
-# global_current_orientation_x    = 0  
-# global_current_orientation_y    = 0  
-# global_current_orientation_z    = 0  
-# global_current_orientation_w    = 0
+
 
 current_pose                    = 0
 #==================== callback 함수 (업데이트) ==================== 
@@ -56,22 +44,7 @@ def cb_mode(mode):
     global_mode = mode.data
     print ('mode : ',global_mode)
 
-# 순간 오도메트리 업데이트 # Odometry msg
-# def cb_temp_odometry(temp_odom_data):      
 
-#     global global_temp_position_x  
-#     global global_temp_position_y 
-#     global global_temp_orientation_x  
-#     global global_temp_orientation_y  
-#     global global_temp_orientation_z  
-#     global global_temp_orientation_w  
-
-#     global_temp_position_x       = temp_odom_data.pose.pose.position.x
-#     global_temp_position_y       = temp_odom_data.pose.pose.position.y 
-#     global_temp_orientation_x    = temp_odom_data.pose.pose.orientation.x 
-#     global_temp_orientation_y    = temp_odom_data.pose.pose.orientation.y 
-#     global_temp_orientation_z    = temp_odom_data.pose.pose.orientation.z 
-#     global_temp_orientation_w    = temp_odom_data.pose.pose.orientation.w 
 
 # 바운딩 박스 업데이트   
 def cb_bounding_box(image_data): #image_data 객체 리스트
@@ -86,28 +59,7 @@ def cb_bounding_box(image_data): #image_data 객체 리스트
     #print ('box_size :',global_box_size)
 
     
-#현재 오도메트리 정보 업데이트 [불필요]
-# def cb_odometry(odom_data): # 현재 위치를 current_ 로 정의 후 global에 저장
-#     # 수정할 변수
-#     #글로벌로 쓰지 않으려면 퍼블리시 하는 함수로 짜야한다.
-#     global global_current_position_x  
-#     global global_current_position_y  
-#     global global_current_orientation_x  
-#     global global_current_orientation_y  
-#     global global_current_orientation_z  
-#     global global_current_orientation_w  
 
-#     global_current_position_x       =  odom_data.pose.pose.position.x
-#     global_current_position_y       =  odom_data.pose.pose.position.y
-#     global_current_orientation_x    =  odom_data.pose.pose.orientation.x 
-#     global_current_orientation_y    =  odom_data.pose.pose.orientation.y 
-#     global_current_orientation_z    =  odom_data.pose.pose.orientation.z 
-#     global_current_orientation_w    =  odom_data.pose.pose.orientation.w 
-
-# 네비게이션 상태 업데이트[불필요]  파라미터로 대체
-# def cb_navigation_status(status):
-#     global global_navigation_status
-#     global_navigation_status = status.data 
 
 # 결과 업데이트 (도착시 메인 모드 0으로 바꾸어 준다)
 def cb_result(result):
@@ -119,20 +71,7 @@ def cb_result(result):
         global_result = False
 
 #==================== 커스텀 함수 ====================
-# 로봇 초기화 함수 [코딩 중...][필요없음]
-# def initialize():
-#     pub_initialize = rospy.Publisher('/set_robot_destination', PoseStamped, queue_size = 10) #로봇의 목적지 퍼블리시
 
-#     robot_initialize = PoseStamped()  # 객체 선언 
-#     robot_initialize.pose.position.x = global_current_position_x
-#     robot_initialize.pose.position.y = global_current_position_y
-#     robot_initialize.pose.position.z = 0.0
-#     robot_initialize.pose.orientation.x = global_current_orientation_x  
-#     robot_initialize.pose.orientation.y = global_current_orientation_y  
-#     robot_initialize.pose.orientation.z = global_current_orientation_z  
-#     robot_initialize.pose.orientation.w = global_current_orientation_w  
-                
-#     pub_initialize.publish(robot_initialize)      # 퍼블리시 할 항목
 def waiting_timer(second):
     time_end = time.time() + second
     print ("waiting %d second"%(second))
