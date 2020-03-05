@@ -39,10 +39,10 @@
     |-----|-----|-----|-----|
     |+|Rviz|roslaunch turson rviz_navigation.launch||  
     ||백 노드|roslaunch turson turson.launch||  
-    |+|모드 컨트롤|rosrun turson mode_control.py||  
-    |+|순찰 모드|rosrun turson patrol_mode.py||  
-    |+|네비게이션 모드|rosrun turson navigation_mode.py||  
-    |+|파라미터|rosrun turson parameter_monitor.py ||  
+    |+|모드 컨트롤|rosrun turson mode_control||  
+    |+|순찰 모드|rosrun turson patrol_mode||  
+    |+|네비게이션 모드|rosrun turson navigation_mode||  
+    |+|파라미터|rosrun turson parameter_monitor||  
 
 
 
