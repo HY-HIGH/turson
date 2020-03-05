@@ -102,7 +102,7 @@ def cb_bounding_boxes(image_data): #image_data 객체 리스트
 
 def node_init():
     rospy.init_node('turson_box_data', anonymous=False)# 노드 초기화 #노드이름
-    rate = rospy.Rate(10) # 발행 속도 10hz 
+    rate = rospy.Rate(1) # 발행 속도 10hz 
     rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,cb_bounding_boxes)
     while not rospy.is_shutdown():
         #print('ok')

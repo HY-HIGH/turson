@@ -104,7 +104,7 @@ def mode_converter():
         else:
             pass
     else :
-        print('[Patrol] : No Person , Safe')
+        print(': No Person , Safe')
 
 # ---------------------------------------------------------------------------- #
 def detection_image_centralize():
