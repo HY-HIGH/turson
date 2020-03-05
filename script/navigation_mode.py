@@ -209,7 +209,6 @@ def box_size_2_distance(): # 박스크기가 5000 이하나 75000이상이면 �
     else :
         print("no need to navigation")
         return 0 
-        
 
 
 
@@ -274,23 +273,28 @@ def navigation():
                 while True:
                     
                     if global_result == True: # 도착하면
-                        print ("goal reached , now wait")
+                        print ("[Navigation] : goal reached , now wait")
+                        
                         #정지 코드 [필요없을듯]
-                        if global_box_size >0 : #사람이 있다
+                        #rospy.set_param('person_detect',0)
+                        past_time = time.time()
+                        if global_box_size > 0  : #사람이 있다
                             while True:
-                                print ("waiting...")
+                                print ("[Navigation] : Waiting...Until Clear|size:{}".format(global_box_size))
                                 if global_box_size < 25000:
-                                    print("person clear")
+                                    print("[Navigation] : Person clear")
                                     break
                                 else:
                                     pass
                         else : # 사람이 업ㅅ다
+                            print("[Navigation] : No Person ")
                             waiting_timer(3)
-                            pass
+                            
 
                         global_result = False
                         rospy.set_param('navigation_status',0) #파라미터 변경
                         rospy.set_param('nav_once',1)#네비게이션 한번만 모드  
+                        print("[Navigation] : Navigation Finished")
                         rospy.set_param('mode',0) #파라미터 변경
                         # 패트롤 모드로 진입 -> 박스크기가 일정이상이면 그대로 패트롤
 

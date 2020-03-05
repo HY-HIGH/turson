@@ -11,10 +11,10 @@
 from darknet_ros_msgs.msg import BoundingBoxes #  이미지 정보 메세지 타입
 from turson.msg import Box_data #커스텀 메시지
 import rospy #로스 파이 패키지
-
+import time
 
 def cb_bounding_boxes(image_data): #image_data 객체 리스트
-    
+    #rospy.set_param('person_detect',1) # 사람 포착
     pub = rospy.Publisher('/box_data', Box_data, queue_size=10) #토픽이름 부여, 자료형 
     # 수정할 변수 
    
@@ -89,6 +89,8 @@ def cb_bounding_boxes(image_data): #image_data 객체 리스트
     #print ("x_mid : ",x_mid) #0
     #print ("y_mid : ",y_mid) #0
     print ("box_size : ",box_size)
+    print ("box_count : ",box_count)
+
     
     target_box_data               = Box_data()
     target_box_data.x_mid         = x_mid
@@ -96,10 +98,11 @@ def cb_bounding_boxes(image_data): #image_data 객체 리스트
     target_box_data.box_size      = box_size
     target_box_data.box_count     = box_count
     pub.publish(target_box_data)
+    
 
 def node_init():
     rospy.init_node('turson_box_data', anonymous=False)# 노드 초기화 #노드이름
-    rate = rospy.Rate(1) # 발행 속도 10hz 
+    rate = rospy.Rate(10) # 발행 속도 10hz 
     rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,cb_bounding_boxes)
     while not rospy.is_shutdown():
         #print('ok')
