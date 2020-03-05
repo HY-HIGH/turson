@@ -240,7 +240,7 @@ def navigation():
     temp_odom = PoseStamped()
    
 
-    rate = rospy.Rate(1) # 발행 속도 10hz 
+    rate = rospy.Rate(10) # 발행 속도 10hz 
     while not rospy.is_shutdown():
         global_navigation_status = rospy.get_param('navigation_status')
         if global_navigation_status == 1 :# 사람이 검출되면
@@ -310,7 +310,7 @@ def navigation():
             else:
                 print("[INFO]: WTF")
 
-                pass
+                
 
         elif global_navigation_status == 0 :
             print("[INFO]: Navigation Deactivated ")

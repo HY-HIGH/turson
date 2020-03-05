@@ -61,10 +61,10 @@ def mode_converter():
     too_far_distance = 25000 # 안정적으로 잡힐때
     enough_distance = 75000 #1.5m
 
-    print('[Patrol] : Person Detected |Size :{}'.format(global_box_size))
+    print(' Person Detected |Size :{}'.format(global_box_size))
     if person_detect == 1: #사람이 검출
         if  global_box_size > enough_distance: # 사람이 가까이 있을 때 
-            print('[Patrol] :Too Close, Warning')
+            print('Too Close, Warning')
 
             person_detect = 0
             # 패트롤 전환 해줘야 함
@@ -78,7 +78,7 @@ def mode_converter():
             
         # nav_once = 0: 네비게이션 도착 전
         elif global_box_size < too_far_distance:
-            print('[Patrol] : Too Far, Safe')
+            print('Too Far, Safe')
             person_detect = 0
             # rospy.set_param('mode',0) # 패트롤
 
@@ -88,7 +88,7 @@ def mode_converter():
 
         elif (too_far_distance <= global_box_size <= enough_distance) and (rospy.get_param('nav_once') == 1): # 사람이 충분히 멀리 있고 // 도착했을 때
             rospy.set_param('mode',2)# 센트럴 라이징 모드 진입 
-            print('[Patrol] : Approach To Person  ')
+            print('Approach To Person  ')
             
             if rospy.get_param('stop_signal') == 1: #멈춰라! 멈춤신호 받으면
 
@@ -104,7 +104,7 @@ def mode_converter():
         else:
             pass
     else :
-        print('[Patrol] :No Person , Safe')
+        print('[Patrol] : No Person , Safe')
 
 # ---------------------------------------------------------------------------- #
 def detection_image_centralize():
