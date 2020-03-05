@@ -51,7 +51,6 @@ def cb_bounding_box(image_data):
     global_box_size     =  image_data.box_size
     #print ('box_size :',global_box_size)
     #print ('center? :',global_x_mid)
-    print('person detected, size :{}'.format(global_box_size))
     
     person_detect = 1
 
@@ -62,9 +61,11 @@ def mode_converter():
     too_far_distance = 25000 # 안정적으로 잡힐때
     enough_distance = 75000 #1.5m
 
+    print('[Patrol] : Person Detected |Size :{}'.format(global_box_size))
     if person_detect == 1: #사람이 검출
         if  global_box_size > enough_distance: # 사람이 가까이 있을 때 
-            print('over box_size')
+            print('[Patrol] :Too Close, Warning')
+
             person_detect = 0
             # 패트롤 전환 해줘야 함
 
@@ -77,7 +78,7 @@ def mode_converter():
             
         # nav_once = 0: 네비게이션 도착 전
         elif global_box_size < too_far_distance:
-            print('too small')
+            print('[Patrol] : Too Far, Safe')
             person_detect = 0
             # rospy.set_param('mode',0) # 패트롤
 
@@ -87,13 +88,15 @@ def mode_converter():
 
         elif (too_far_distance <= global_box_size <= enough_distance) and (rospy.get_param('nav_once') == 1): # 사람이 충분히 멀리 있고 // 도착했을 때
             rospy.set_param('mode',2)# 센트럴 라이징 모드 진입 
-            print ("image centrallizing")
+            print('[Patrol] : Approach To Person  ')
+            
             if rospy.get_param('stop_signal') == 1: #멈춰라! 멈춤신호 받으면
-                print('navigation mode')
 
                 detection_image_centralize()# 중심에 맞추고 중심에 오면 #네비게이션 엑티베이트   
+                print('[Centralize] : Centralize Finished')
                 rospy.set_param('mode',1)#네비게이션 모드
 
+                print('[navigation] : Navigation Start')
                 rospy.set_param('stop_signal',0)
                 person_detect = 0
             else: 
@@ -101,7 +104,7 @@ def mode_converter():
         else:
             pass
     else :
-        print('no person')
+        print('[Patrol] :No Person , Safe')
 
 # ---------------------------------------------------------------------------- #
 def detection_image_centralize():
@@ -124,7 +127,8 @@ def detection_image_centralize():
         twist.angular.z = angular_velocity
         pub_twist.publish(twist)
 
-        print("x_mid",global_x_mid)
+        print("[Centralize] : Person Centralizing... before navigation")
+        print("[Centralize] : x_mid :{}".format(global_x_mid));print('\n')
         if 0.48 < global_x_mid < 0.52 : # xmid 가 0.5 가되면 정지
             twist.angular.x = 0
             twist.angular.y = 0
@@ -134,7 +138,6 @@ def detection_image_centralize():
             rospy.set_param('navigation_status',1)
             break
         rate_detection.sleep()
-        print("Centralizing_Rotating...");print('\n')
 
 def mode_controller():
     while not rospy.is_shutdown():
@@ -175,7 +178,7 @@ if __name__ == '__main__':
         rate = rospy.Rate(10)                                                # while 반복 속도 제어, 1hz 
         robot_status = False                                                # 로봇의 Navigation goal 도착여부 확인
         distance_margin = 0.1                                               # 로봇의 목표값과 센서값 오차범위
-        rate_main = rospy.Rate(0.5)                                         # while 반복 속도 제어, 0.5hz
+        rate_main = rospy.Rate(10)                                         # while 반복 속도 제어, 0.5hz
         current_pose = PoseStamped()                                        # 현재 로봇의 위치 실시간 update
         past_get_param = rospy.get_param('mode')                            # Set parameter 'mode'
     #----------------Initiate main statement-------------

@@ -205,10 +205,11 @@ def box_size_2_distance(): # 박스크기가 5000 이하나 75000이상이면 �
         print("----------------------")
         print("now robot go to person") 
         distance_person = 1.0
+        return distance_person
     else :
         print("no need to navigation")
-        pass
-    return distance_person
+        return 0 
+        
 
 
 
