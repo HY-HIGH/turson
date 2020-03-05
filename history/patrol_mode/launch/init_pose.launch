@@ -1,5 +1,0 @@
-<launch>
-  <!-- Init_pose open -->
-  <node pkg="patrol_mode" name="Init_pose" type="init_pose.py" output="screen"></node>
-  
-</launch>

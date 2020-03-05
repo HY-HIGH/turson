@@ -7,7 +7,7 @@ import rospy                                             #로스 파이 패키�
 from random import *
 from tf.transformations import quaternion_from_euler     #오일러-쿼터니안 변환
 from tf.transformations import euler_from_quaternion     #쿼터니안-오일러 변환
-
+import time
 # 메시지
 from darknet_ros_msgs.msg   import BoundingBoxes         # 이미지 정보 메세지 타입
 from geometry_msgs.msg      import Vector3               # 벡터 (x,y,z)
@@ -36,7 +36,7 @@ global_navigation_status        = 0 # 0: deactivated 1: activated
 global_x_mid                    = 0
 global_box_size                 = 0 
 global_box_count                = 0  
-
+person_detected                 = 0
 # 현재 오도메트리
 # global_current_position_x       = 0   
 # global_current_position_y       = 0     
@@ -79,8 +79,10 @@ def cb_bounding_box(image_data): #image_data 객체 리스트
     # 수정할 변수 
     global global_box_size  
     global global_x_mid
+    
     global_box_size    = image_data.box_size
     global_x_mid       = image_data.x_mid
+    
     #print ('box_size :',global_box_size)
 
     
@@ -113,7 +115,6 @@ def cb_result(result):
     if result.status.status == 3:
 
         global_result = True
-        print('is it reached ? :',global_result)
     else :
         global_result = False
 
@@ -132,7 +133,12 @@ def cb_result(result):
 #     robot_initialize.pose.orientation.w = global_current_orientation_w  
                 
 #     pub_initialize.publish(robot_initialize)      # 퍼블리시 할 항목
-
+def waiting_timer(second):
+    time_end = time.time() + second
+    print ("waiting %d second"%(second))
+    while True:
+        if time.time() > time_end:
+            break
 # 로봇의 로컬 좌표를 글로벌 좌표계에서 쓸수있도록 변환
 def angle_transform():
     orient = current_radian() 
@@ -195,8 +201,9 @@ def box_size_2_distance(): # 박스크기가 5000 이하나 75000이상이면 �
     #     distance_person = 1.5
     # else :
     #     pass
-    if 5000 <= global_box_size < 75000 :
-        print("go to person") 
+    if 25000 <= global_box_size < 75000 :
+        print("----------------------")
+        print("now robot go to person") 
         distance_person = 1.0
     else :
         print("no need to navigation")
@@ -240,11 +247,11 @@ def navigation():
             print("[INFO]: Navigation Activate ")
             global_mode = rospy.get_param('mode')
             if global_mode == 1:# 센트럴 라이징 완료 후
+                print("[INFO]: Centrallizing Finished")
                 nav_once =  rospy.get_param('nav_once')
-                print('nav_once',rospy.get_param('nav_once'))
                 if nav_once == 1: # 한번만 
                 #initialize()  필요 없음
-                    print("[INFO]: Navigation Mode ")
+                    print("[INFO]: Navigation Start  ")
                     
 
                     robot_destination = PoseStamped()  # 객체 선언 
@@ -264,18 +271,26 @@ def navigation():
                     
 
                 while True:
-                    #print ("Robot is moving now")
+                    
                     if global_result == True: # 도착하면
+                        print ("goal reached , now wait")
                         #정지 코드 [필요없을듯]
-                        print ("========parameter change========")
-                        print ("========Patrol Mode========"    )
+                        if global_box_size >0 : #사람이 있다
+                            while True:
+                                print ("waiting...")
+                                if global_box_size < 25000:
+                                    print("person clear")
+                                    break
+                                else:
+                                    pass
+                        else : # 사람이 업ㅅ다
+                            waiting_timer(3)
+                            pass
 
-                        
-                        #stop_robot()
                         global_result = False
                         rospy.set_param('navigation_status',0) #파라미터 변경
-                        rospy.set_param('mode',0) #파라미터 변경
                         rospy.set_param('nav_once',1)#네비게이션 한번만 모드  
+                        rospy.set_param('mode',0) #파라미터 변경
                         # 패트롤 모드로 진입 -> 박스크기가 일정이상이면 그대로 패트롤
 
                         # 여기에서 파라미터를 바꾸어 줄것인지?

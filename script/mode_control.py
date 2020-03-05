@@ -59,7 +59,7 @@ def cb_bounding_box(image_data):
 def mode_converter():
     global person_detect
     global robot_status
-    too_far_distance = 5000 # 안정적으로 잡힐때
+    too_far_distance = 25000 # 안정적으로 잡힐때
     enough_distance = 75000 #1.5m
 
     if person_detect == 1: #사람이 검출
@@ -70,19 +70,19 @@ def mode_converter():
 
             # 갑자기 사람이 잡히면 // 패트롤
             # 네비게이션 이후 에도 // 패트롤
-            rospy.set_param('mode',0) # 패트롤
+            # rospy.set_param('mode',0) # 패트롤
 
-            rospy.set_param('navigation_status',0)  # 네비게이션 초기화
-            rospy.set_param('nav_once',1)           # 네비게이션 초기화
+            # rospy.set_param('navigation_status',0)  # 네비게이션 초기화
+            # rospy.set_param('nav_once',1)           # 네비게이션 초기화
             
         # nav_once = 0: 네비게이션 도착 전
         elif global_box_size < too_far_distance:
             print('too small')
             person_detect = 0
-            rospy.set_param('mode',0) # 패트롤
+            # rospy.set_param('mode',0) # 패트롤
 
-            rospy.set_param('navigation_status',0)  # 네비게이션 초기화
-            rospy.set_param('nav_once',1)           # 네비게이션 초기화
+            # rospy.set_param('navigation_status',0)  # 네비게이션 초기화
+            # rospy.set_param('nav_once',1)           # 네비게이션 초기화
             #멀리있는건 패스
 
         elif (too_far_distance <= global_box_size <= enough_distance) and (rospy.get_param('nav_once') == 1): # 사람이 충분히 멀리 있고 // 도착했을 때
@@ -110,10 +110,10 @@ def detection_image_centralize():
     # 즉, 로봇이 대상을 정면으로 볼 때까지 계속 위치제어
     while True:
         global global_x_mid
-        if global_x_mid <= 0.40:
+        if global_x_mid <= 0.48:
             angular_velocity = 0.1
     
-        elif global_x_mid >= 0.6:
+        elif global_x_mid >= 0.52:
             angular_velocity = -0.1
         
         else :
@@ -125,7 +125,7 @@ def detection_image_centralize():
         pub_twist.publish(twist)
 
         print("x_mid",global_x_mid)
-        if 0.40 < global_x_mid < 0.60 : # xmid 가 0.5 가되면 정지
+        if 0.48 < global_x_mid < 0.52 : # xmid 가 0.5 가되면 정지
             twist.angular.x = 0
             twist.angular.y = 0
             twist.angular.z = 0
@@ -172,7 +172,7 @@ if __name__ == '__main__':
         global_x_mid = 0                                                    # Person detection box의 x 좌표의 중앙값
         person_detect = 0                                                   # Person detection 여부
         global_box_size = 0                                                 # Person detection box의 크기값
-        rate = rospy.Rate(1)                                                # while 반복 속도 제어, 1hz 
+        rate = rospy.Rate(10)                                                # while 반복 속도 제어, 1hz 
         robot_status = False                                                # 로봇의 Navigation goal 도착여부 확인
         distance_margin = 0.1                                               # 로봇의 목표값과 센서값 오차범위
         rate_main = rospy.Rate(0.5)                                         # while 반복 속도 제어, 0.5hz

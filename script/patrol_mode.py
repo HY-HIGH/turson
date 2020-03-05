@@ -140,7 +140,7 @@ def rotate_callibrate():
             pub_twist.publish(twist)
             break
         else: # 양수: 반시계방향 회전 | 음수: 시계방향 회전
-            twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = -0.1
+            twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = -0.1  ## 속도 수정(-0.1)
             print("Callibrationing...")
             pub_twist.publish(twist)
 
@@ -194,7 +194,7 @@ def is_reached_position():
                     # while을 계속 돌면서 수행될 곳, 아무일도 없이 넘어가야 함.    
                     else:
                         go_patrol_point(x_goal,y_goal)
-                        print("Wait for start...")
+                        print("Wait for start...\n")
                 
                 rate_main_while.sleep()
             
@@ -203,7 +203,7 @@ def is_reached_position():
             temp_switch_check = False
             
         elif robot_start == True and robot_status == False : # 출발은 했는데 도착은 못했으면
-            print("Moving...")
+            print("Moving...\n")
 
         elif robot_start == True and robot_status == True: # 출발도 했고 도착도 했다면
             robot_start = False
@@ -330,15 +330,14 @@ def patrol_mode():
             robot_status = False
             temp_finished  = False
         else:
-            print("Image centralizeing...: %d"%rospy.get_param('mode')) # 사람 검출 진입 2번 모드
             print("temp_finished:{} robot_status:{}".format(temp_finished,robot_status)) # F F
             if temp_finished == False:#로봇이 멈출때 까지 실행
                 if robot_status == False: #1
                     while True:
                         stop_rate = rospy.Rate(10)
                         print("Try to stop robot...") # 갖혀있음####
-                        print('robot_status:{}'.format(robot_status))
-                        print(current_pose);print('='*5)
+                        print('robot_status:{}'.format(robot_status))  
+                        # print(current_pose);print('='*5)
                         pub_stop_destination.publish(current_pose)
                         if robot_status == True:
                             print("Robot stopped!") #2
@@ -398,7 +397,7 @@ if __name__ == '__main__':
         rospy.Subscriber('/real_pose', PoseStamped, current_pose_callback)
         rospy.Subscriber('/move_base/result',MoveBaseActionResult,status_callback)
         # ------------------Configuration varaibles------------------
-        angular_velocity = -0.1
+        angular_velocity = -0.1 ## 속도 수정(-0.1)
         rotate_time_second = 5.0
         rospy.set_param('stop_signal',0)
 # ---------------------------------------------------------------------------- #
