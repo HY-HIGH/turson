@@ -7,6 +7,7 @@ import math
 import copy
 import time
 import rospy 
+
 from std_msgs.msg import Int64
 from nav_msgs.msg import Odometry
 from move_base_msgs.msg import MoveBaseActionResult
@@ -23,7 +24,6 @@ class color:
    BOLD = '\033[1m'
    UNDERLINE = '\033[4m'
    END = '\033[0m'
-
 # ---------------------------------------------------------------------------- #
 #                             Initiate patrol mode(검증완료)             
 # Patrol mode를 시행하며, 지속적으로 현재의 mode 및 로봇의 위치를 확인하면서 해당 조건에 맞는

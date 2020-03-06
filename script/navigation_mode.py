@@ -15,14 +15,25 @@ from geometry_msgs.msg      import Vector3               # 벡터 (x,y,z)
 from geometry_msgs.msg      import Quaternion            # 쿼터니언(x,y,z,w)
 from geometry_msgs.msg      import PoseStamped           # 메세지 패키지 속 메세지 모듈을 가져와서 그중 PoseStamped를 가져온다.
 from nav_msgs.msg           import Odometry              # 오도메트리 메시지
-from turson.msg  import Box_data              # 박스 데이터 커스텀 메시지
+from turson.msg             import Box_data              # 박스 데이터 커스텀 메시지
 from std_msgs.msg           import Int64                 # 모드 관련 메시지
 from move_base_msgs.msg     import MoveBaseActionResult  # result 메시지
-
+from geometry_msgs.msg      import Twist          # 로봇의 각종 움직임 제어,
+class color:
+   PURPLE = '\033[95m'
+   CYAN = '\033[96m'
+   DARKCYAN = '\033[36m'
+   BLUE = '\033[94m'
+   GREEN = '\033[92m'
+   YELLOW = '\033[93m'
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   END = '\033[0m'
 #==================== 전역 변수 설정 ==================== 
 # 모드 관련
 global_mode                     = 0 
-#global_result                   = False # 도착 여부
+global_result                   = False # 도착 여부
 
 
 
@@ -30,7 +41,7 @@ global_mode                     = 0
 global_x_mid                    = 0
 global_box_size                 = 0 
 global_box_count                = 0  
-
+global_no_person                = False
 # real pose
 current_pose                    = 0
 #==================== callback 함수 (업데이트) ==================== 
@@ -64,26 +75,16 @@ def cb_bounding_box(image_data): #image_data 객체 리스트
 
 
 # 결과 업데이트 (도착시 메인 모드 0으로 바꾸어 준다)
-# def cb_result(result):
-#     global global_result
-#     if result.status.status == 3:
+def cb_result(result):
+    global global_result
+    if result.status.status == 3:
 
-#         global_result = True
-#     else :
-#         global_result = False
+        global_result = True
+    else :
+        global_result = False
 
 #==================== 커스텀 함수 ====================
-class color:
-   PURPLE = '\033[95m'
-   CYAN = '\033[96m'
-   DARKCYAN = '\033[36m'
-   BLUE = '\033[94m'
-   GREEN = '\033[92m'
-   YELLOW = '\033[93m'
-   RED = '\033[91m'
-   BOLD = '\033[1m'
-   UNDERLINE = '\033[4m'
-   END = '\033[0m'
+
 # 시간 홀드 함수
 def waiting_timer(second):
     time_end = time.time() + second
@@ -177,57 +178,87 @@ def navigation():
     global global_result
     global global_navigation_status
     global global_mode
+    global global_no_person
+
+
     rospy.init_node('navigation', anonymous=False)                                           # 노드 초기화 #노드이름
 
     pub_destination = rospy.Publisher('/set_robot_destination', PoseStamped, queue_size = 10) #로봇의 목적지 퍼블리시
+    pub_twist = rospy.Publisher('cmd_vel', Twist, queue_size=10)        # 로봇의 움직임 제어
     
-    #rospy.Subscriber('/move_base/result',MoveBaseActionResult,cb_result)    # 목적지 도착 여부 계속 서브스크라이브
+    rospy.Subscriber('/move_base/result',MoveBaseActionResult,cb_result)    # 목적지 도착 여부 계속 서브스크라이브
     rospy.Subscriber('/box_data',Box_data,cb_bounding_box)
     rospy.Subscriber('/real_pose',PoseStamped,cb_real_pose)
     rospy.Subscriber('/darknet_ros/found_object',ObjectCount,cb_box_count)           
 
-
-
-
-    mode = Int64()
-   
-   
     message_rate = rospy.Rate(1)
     rate = rospy.Rate(10) # 발행 속도 10hz 
-    while not rospy.is_shutdown():
+    while not rospy.is_shutdown(): #네비게이션 노드 유지
         global_mode = rospy.get_param('mode') # 모드를 받아오면 시작
+
         if global_mode == 1:# 센트럴 라이징 완료 후
+            global_no_person = False #사람 있음
             print("[INFO]: Navigation Mode Activate ")
 
             while True: # 센트럴 라이징 시작 (중심에 올때까지 계속)
                 centralize_rate = rospy.Rate(10)
                 global global_x_mid
-                if global_x_mid <= 0.48:
-                    angular_velocity = 0.1
-            
-                elif global_x_mid >= 0.52:
-                    angular_velocity = -0.1
-                
-                else :
-                    angular_velocity = 0
-
-                twist.angular.x = 0
-                twist.angular.y = 0
-                twist.angular.z = angular_velocity
-                pub_twist.publish(twist)
-
-                print("[INFO] : Centralizing...Before Navigation")
-                print("[INFO] : x_mid :{}".format(global_x_mid));print('\n')
-                
-                if 0.48 < global_x_mid < 0.52 : # xmid 가 0.5 근처가 되면 정지
-                    twist.angular.x = 0
-                    twist.angular.y = 0
-                    twist.angular.z = 0
+                if global_box_count > 0 :  #사람이 있으면
+                    if global_x_mid <= 0.48:
+                        angular_velocity = 0.1
+                    elif global_x_mid >= 0.52:
+                        angular_velocity = -0.1
+                    else :
+                        angular_velocity = 0
+                    twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = angular_velocity
                     pub_twist.publish(twist)
-                    
-                    print("[INFO]: Centrallizing Finished")
-                    break
+                    print("[INFO] : Centralizing...Before Navigation")
+                    print("[INFO] : x_mid :{}".format(global_x_mid));print('\n')
+            
+                    if 0.48 < global_x_mid < 0.52 : # xmid 가 0.5 근처가 되면 정지
+                        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+                        pub_twist.publish(twist)
+                        print("[INFO]: Centrallizing Finished")
+                        break
+                 
+                else: # 사람이 없으면 
+                    while True:
+                        if global_no_person == True: #아직 break 안함 global_no_person F
+                            break # 223 줄
+                        
+                        second = 10 # x 초 주변 스캔                
+                        time_final = time.time() + second
+                        print ("waiting %d second"%(second))
+
+                        if global_box_count > 0: 
+                            break # 223 줄 break
+
+                        while True:
+                            if global_x_mid <= 0.48:
+                                angular_velocity = 0.1
+
+                            elif global_x_mid >= 0.52:
+                                angular_velocity = -0.1
+
+                            else :
+                                angular_velocity = 0
+                            twist.angular.x = 0;twist.angular.y = 0;twist.angular.z = angular_velocity
+                           
+                            pub_twist.publish(twist)
+                            
+                            if (global_box_count > 0) :# 시간 상관 없이 돌다가 사람이 검출되면 
+
+                                break #234
+                            if (time.time() > time_final)and(global_box_count = 0): # 10초 \
+                                global_no_person = True
+                                break  #234
+                if (global_no_person == True):
+                    break#202
                 centralize_rate.sleep()
+            if global_no_person == True : 
+                rospy.set_param('mode',0) #센트럴 모드 진입 후  10초 후에도 사람이 없으면 패트롤 모드 강제 전환 
+                continue
+#----------------------------------------------------------------------------------------------------
             print("[INFO]: Start Navigation")
             
             robot_destination = PoseStamped()  # 객체 선언 
@@ -249,16 +280,22 @@ def navigation():
                     if global_box_count > 0  : #사람이 있다
                         while True:
                             print ("[INFO] : Waiting...Until Clear|size:{}".format(global_box_size))
-                            if global_box_size < 25000:
+                            if (global_box_size < 25000) and (global_box_count > 0):
                                 print("[INFO] : Person Clear")
                                 print("[INFO] : Patrol Mode Start")
                                 break
+                            elif (global_box_count = 0) :
+                                print("[INFO] : Patrol Mode Start After 3 second ")
+                                waiting_timer(3) 
+                                print("[INFO] : Patrol Mode Start")
+                                break 
                             else:
-                                pass
+                                pass    
                         message_rate.sleep()
                     elif global_box_count = 0 : # 사람이 없다
                         print("[INFO] : Patrol Mode Start After 3 second ")
                         waiting_timer(3)  
+                        print("[INFO] : Patrol Mode Start")
 
                     rospy.set_param('mode',0) #파라미터 변경
                     # 패트롤 모드로 진입 -> 박스크기가 일정이상이면 그대로 패트롤
@@ -269,7 +306,6 @@ def navigation():
                 else :
                     print ("[INFO] : Going To Destination")
                 rate.sleep()
-
 
         elif global_mode == 0:
             print("[INFO]: Patrol Mode ")
