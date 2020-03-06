@@ -13,7 +13,7 @@ from darknet_ros_msgs.msg import ObjectCount
 from move_base_msgs.msg import MoveBaseActionResult                         # 로봇의 Navigation goal 도착여부 수신
 from geometry_msgs.msg import Vector3,Quaternion,PoseStamped,Twist          # 로봇의 각종 움직임 제어,
 from tf.transformations import quaternion_from_euler,euler_from_quaternion  # 로봇의 위치 및 방향 좌표변환
-from color import color 
+from text_color import color 
 #----------------------------------------------------
 
 

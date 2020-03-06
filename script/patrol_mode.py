@@ -7,7 +7,7 @@ import math
 import copy
 import time
 import rospy 
-from color import color 
+from text_color import color 
 from std_msgs.msg import Int64
 from nav_msgs.msg import Odometry
 from move_base_msgs.msg import MoveBaseActionResult
