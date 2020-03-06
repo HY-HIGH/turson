@@ -19,17 +19,7 @@ from turson.msg             import Box_data              # 박스 데이터 커�
 from std_msgs.msg           import Int64                 # 모드 관련 메시지
 from move_base_msgs.msg     import MoveBaseActionResult  # result 메시지
 from geometry_msgs.msg      import Twist          # 로봇의 각종 움직임 제어,
-class color:
-   PURPLE = '\033[95m'
-   CYAN = '\033[96m'
-   DARKCYAN = '\033[36m'
-   BLUE = '\033[94m'
-   GREEN = '\033[92m'
-   YELLOW = '\033[93m'
-   RED = '\033[91m'
-   BOLD = '\033[1m'
-   UNDERLINE = '\033[4m'
-   END = '\033[0m'
+from color import color 
 #==================== 전역 변수 설정 ==================== 
 # 모드 관련
 global_mode                     = 0 

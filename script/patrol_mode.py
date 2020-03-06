@@ -7,23 +7,12 @@ import math
 import copy
 import time
 import rospy 
-
+from color import color 
 from std_msgs.msg import Int64
 from nav_msgs.msg import Odometry
 from move_base_msgs.msg import MoveBaseActionResult
 from geometry_msgs.msg import Vector3,Quaternion,PoseStamped,Twist
 from tf.transformations import quaternion_from_euler,euler_from_quaternion  
-class color:
-   PURPLE = '\033[95m'
-   CYAN = '\033[96m'
-   DARKCYAN = '\033[36m'
-   BLUE = '\033[94m'
-   GREEN = '\033[92m'
-   YELLOW = '\033[93m'
-   RED = '\033[91m'
-   BOLD = '\033[1m'
-   UNDERLINE = '\033[4m'
-   END = '\033[0m'
 # ---------------------------------------------------------------------------- #
 #                             Initiate patrol mode(검증완료)             
 # Patrol mode를 시행하며, 지속적으로 현재의 mode 및 로봇의 위치를 확인하면서 해당 조건에 맞는

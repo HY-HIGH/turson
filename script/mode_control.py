@@ -13,17 +13,7 @@ from darknet_ros_msgs.msg import ObjectCount
 from move_base_msgs.msg import MoveBaseActionResult                         # 로봇의 Navigation goal 도착여부 수신
 from geometry_msgs.msg import Vector3,Quaternion,PoseStamped,Twist          # 로봇의 각종 움직임 제어,
 from tf.transformations import quaternion_from_euler,euler_from_quaternion  # 로봇의 위치 및 방향 좌표변환
-class color:
-   PURPLE = '\033[95m'
-   CYAN = '\033[96m'
-   DARKCYAN = '\033[36m'
-   BLUE = '\033[94m'
-   GREEN = '\033[92m'
-   YELLOW = '\033[93m'
-   RED = '\033[91m'
-   BOLD = '\033[1m'
-   UNDERLINE = '\033[4m'
-   END = '\033[0m'
+from color import color 
 #----------------------------------------------------
 
 
