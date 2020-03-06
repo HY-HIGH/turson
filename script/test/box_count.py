@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 from darknet_ros_msgs.msg import ObjectCount
+
 import rospy #로스 파이 패키지
 
 def cb_box_count(box_count) :
@@ -12,7 +13,7 @@ def init_node():
 
     while not rospy.is_shutdown():
         #print('ok')
-        rate.sleep
+        rate.sleep()
 
 if __name__ == '__main__':
     try:

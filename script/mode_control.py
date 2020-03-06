@@ -49,17 +49,7 @@ def cb_bounding_box(image_data):
 
     global_x_mid        =  image_data.x_mid
     global_box_size     =  image_data.box_size
-    #print ('box_size :',global_box_size)
-    #print ('center? :',global_x_mid)
-    
-    person_detect = 1
-
-# ---------------------------------------------------------------------------- #
-def mode_converter():
-    global person_detect
-    global robot_status
-    too_far_distance = 25000 # 안정적으로 잡힐때
-    enough_distance = 75000 #1.5m
+    #print ('box_size :ospy.set_param('nav_once',0)5000 #1.5m
 
     print(' Person Detected |Size :{}'.format(global_box_size))
     if person_detect == 1: #사람이 검출
@@ -107,37 +97,8 @@ def mode_converter():
         print(': No Person , Safe')
 
 # ---------------------------------------------------------------------------- #
-def detection_image_centralize():
-    rate_detection = rospy.Rate(10)
-    # 로봇이 detection box의 x좌표가 중앙에 오는 것.
-    # 즉, 로봇이 대상을 정면으로 볼 때까지 계속 위치제어
-    while True:
-        global global_x_mid
-        if global_x_mid <= 0.48:
-            angular_velocity = 0.1
+
     
-        elif global_x_mid >= 0.52:
-            angular_velocity = -0.1
-        
-        else :
-            angular_velocity = 0
-
-        twist.angular.x = 0
-        twist.angular.y = 0
-        twist.angular.z = angular_velocity
-        pub_twist.publish(twist)
-
-        print("[Centralize] : Person Centralizing... before navigation")
-        print("[Centralize] : x_mid :{}".format(global_x_mid));print('\n')
-        if 0.48 < global_x_mid < 0.52 : # xmid 가 0.5 가되면 정지
-            twist.angular.x = 0
-            twist.angular.y = 0
-            twist.angular.z = 0
-            pub_twist.publish(twist)
-
-            rospy.set_param('navigation_status',1)
-            break
-        rate_detection.sleep()
 
 def mode_controller():
     while not rospy.is_shutdown():
