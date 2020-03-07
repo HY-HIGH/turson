@@ -1,5 +1,5 @@
 # ISSUE : TF /odom 의 뒤틀림으로 인한 현재 위치 오차   
-![Rqt_graph](/image/frames.png)
+![Frame](../../image/frames.png)
 
 ## DWA (dynamic window approach)_
 

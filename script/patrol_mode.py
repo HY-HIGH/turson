@@ -10,6 +10,7 @@ import rospy
 from text_color import color 
 from std_msgs.msg import Int64
 from nav_msgs.msg import Odometry
+from darknet_ros_msgs.msg import ObjectCount        
 from move_base_msgs.msg import MoveBaseActionResult
 from geometry_msgs.msg import Vector3,Quaternion,PoseStamped,Twist
 from tf.transformations import quaternion_from_euler,euler_from_quaternion  
@@ -64,6 +65,15 @@ def status_callback(result):
         robot_status = True
     else:
         pass
+# ---------------------------------------------------------------------------- #
+#                             BOX 유무(=사람유무) 수신                             #
+# 0 = 사람 없음
+# 0 > 사람 있음
+# ---------------------------------------------------------------------------- #
+def box_count_callback(box_count):
+    global global_box_count     
+    global_box_count = box_count.count
+    
 # ---------------------------------------------------------------------------- #
 #                      Assign Patrol point and orientation(검증완료)
 # 지정된 patrol point 위치 및 로봇 헤드 방향 지정
@@ -242,6 +252,7 @@ def is_reached_position():
     global robot_status
     global current_pose
     global switch_patrol
+    global global_box_count
     global x_goal; global y_goal
     error_check = False
     switch_check = False
@@ -250,7 +261,7 @@ def is_reached_position():
     # print("robot_status",robot_status)
     # print("=======================")
     if rospy.get_param('mode') == 1: # Navigation mode일때는 해당함수 더 이상 수행하지 말 것
-        pass
+        print(color.YELLOW + '[Navigation] Activated' + color.END)
     elif rospy.get_param('mode') == 0:
         if (robot_start == False) and (robot_status == False): # 출발도 도착도 안했다면
             position_timer(POSITION_TIME) # 현재 위치 업로드 
@@ -280,6 +291,9 @@ def is_reached_position():
                     else:
                         go_patrol_point(x_goal,y_goal)
                         print("[Patrol]: Get ready for starting...")
+                # 출발 대기 중이더라도 Navigation mode로 전환되면 현재 작업 중단
+                if rospy.get_param('mode') == 1:
+                    break
                 RATE.sleep()
             
             robot_start = True
@@ -361,9 +375,10 @@ if __name__ == '__main__':
         global ORIENT; global CALLIBRATE_ORIENT
         global BOTTOM_LEFT; global BOTTOM_RIGHT; global TOP_LEFT; global TOP_RIGHT# 로봇의 Patrol point 좌표지정
 
-        global robot_status
         global robot_start
+        global robot_status
         global switch_patrol
+        global global_box_count
         global current_pose; global twist                      # 로봇의 움직임 제어에 필요한 객체
         #---------------------Define variables--------------------
         POSITION_TIME = 0.5               # 출발 전 현재위치 업로드 시간[sec]
@@ -388,6 +403,8 @@ if __name__ == '__main__':
 
         rospy.Subscriber('/real_pose', PoseStamped, current_pose_callback)
         rospy.Subscriber('/move_base/result',MoveBaseActionResult,status_callback)
+        rospy.Subscriber('/darknet_ros/found_object',ObjectCount,box_count_callback)
+
         # ------------------Configuration varaibles------------------
         angular_velocity = -0.1
         rotate_time_second = 5.0
