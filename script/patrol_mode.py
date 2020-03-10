@@ -307,20 +307,24 @@ def is_reached_position():
             robot_start = False
             robot_status = False
             if rospy.get_param('mode') == 1:
-                pass
+                continue
             else:
                 rotating_mission(rotate_time_second)
             if rospy.get_param('mode') == 1:
-                pass
+                continue
             else:
                 rotate_callibrate()
 
             print(color.GREEN +'='*30 + color.END)
             print(color.GREEN + "[Patrol]: Rotation finished!!!"+ color.END)
             print(color.GREEN + '='*30 + color.END)
-    
-            switch_patrol_point()
-        else: # 205번째 상황 중간에 종료된 것이므로 다시 순찰모드로 전환해야 함 switch_patrol의 오류상황은 166번째 상황에서 처리
+            # 사람이 존재하지 않으면
+            if global_box_count == 0 or rospy.get_param('mode') == 1:
+                pass
+            else:
+                switch_patrol_point()
+
+        else: # 205번째 상황 중간에 종료된 것이므로 다시 순찰모드로 전환해야 함 switch_patrol의 오류상황은 166번째 상황에서 처리(robot_start = False, robot_status = True)
             robot_start  =  False
             robot_status =  False
     else:
