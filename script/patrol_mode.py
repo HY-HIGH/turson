@@ -307,11 +307,11 @@ def is_reached_position():
             robot_start = False
             robot_status = False
             if rospy.get_param('mode') == 1:
-                continue
+                pass
             else:
                 rotating_mission(rotate_time_second)
             if rospy.get_param('mode') == 1:
-                continue
+                pass
             else:
                 rotate_callibrate()
 
@@ -359,8 +359,9 @@ def set_patrol_coordinate():
     print("ORIENT:",ORIENT)
     print("CALLIBRATE_ORIENT:",CALLIBRATE_ORIENT)
     print("=======================")
+    
 
-    confirm = input("입력값이 정확한지 확인해주세요.(y/n)")
+    confirm = raw_input("입력값이 정확한지 확인해주세요.(y/n)")
     if confirm == 'y':
         print(color.GREEN + "입력이 확인되었습니다. 순찰모드를 실행합니다." + color.END)
     else:
@@ -394,6 +395,7 @@ if __name__ == '__main__':
         current_pose = PoseStamped()     # 현재 로봇의 위치 실시간 update
         robot_start = False
         robot_status = False
+        global_box_count = 0
         #---------------------Set publisher & subscriber----------
         # 3 Publisher: 
         #   1) Twist:turtlebot 제자리 회전을 위해 위해 필요
