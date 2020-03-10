@@ -239,7 +239,7 @@ def navigation():
                             if (global_box_count > 0) :# 시간 상관 없이 돌다가 사람이 검출되면 
 
                                 break #234
-                            if (time.time() > time_final)and(global_box_count = 0): # 10초 \
+                            if (time.time() > time_final)and(global_box_count == 0): # 10초 
                                 global_no_person = True
                                 break  #234
                 if (global_no_person == True):
