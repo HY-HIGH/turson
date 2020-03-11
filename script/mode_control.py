@@ -59,7 +59,7 @@ def stop():
             break
         else :
             pub_stop_destination.publish(current_pose)
-            print("Try to stop!")
+            print(color.PURPLE + "Try to stop!" + color.END)
         # stop 과정 중 사람이 없어진다면: 현재 하던 작업을 멈추고
         if global_box_count == 0 :
             break
@@ -69,7 +69,7 @@ def mode_converter():
     # 사람이 검출
     if global_box_count > 0: 
         # 사람이 검출되었다면, 그 사람이 로봇으로 부터 얼마만큼 떨어져 있는지를 확인
-        print(' Person Detected | Size :{}'.format(global_box_size))
+        print('Person Detected | Size :{}'.format(global_box_size))
         # 사람이 가까이 있을 때: 갑자기 사람이 로봇에게 가까이 등장했을 때를 의미, 경고음만 내며 Navigation 모드로 전환하지 않는다.
         if  global_box_size > enough_distance: 
             print(color.GREEN + "[Patrol Mode]"+'Too Close, Warning'+ color.END)
@@ -78,7 +78,7 @@ def mode_converter():
             print(color.GREEN + "[Patrol Mode]"+'Too Far, Safe'+ color.END)
         # 사람이 제한범위 이내로 들어왔을 때: 포착된 위치로 가기 위해 Navigation 모드로 전환
         elif (too_far_distance <= global_box_size <= enough_distance) : 
-            print('Start Approach To Person')
+            
             # 현재 위치 정지 작업 실시
             stop()
             # 정지 작업을 마쳤고 여전히 사람이 존재한다면: Navigation mode로 전환
@@ -86,6 +86,7 @@ def mode_converter():
                 # 정지완료
                 print(color.RED + "="*10 + color.END)
                 print(color.RED + "Robot stop!" + color.END)
+                print(color.RED + 'Start Approach To Person' + color.END)
                 print(color.RED + "="*10 + color.END)
  
                 # 위의 과정을 정상적으로 마쳤다면 Navigation 모드 실행           

@@ -28,15 +28,15 @@ def patrol_mode():
         global current_pose
         main_mode = rospy.g et_param('mode')
         if main_mode == 0 :
-            print(color.GREEN + "[Patrol mode]: %d"%rospy.get_param('mode') + color.END)
+            print(color.GREEN + "[INFO] Patrol mode: %d"%rospy.get_param('mode') + color.END)
             is_reached_position()
         elif main_mode == 1:
-            print(color.YELLOW + "[Navigation mode]: %d"%rospy.get_param('mode')+ color.END)
+            print(color.YELLOW + "[INFO] Navigation mode: %d"%rospy.get_param('mode')+ color.END)
             calculate_shortest_distance_between_robot_and_patrol_point()
             robot_start = False
             robot_status = False
         else :
-            print(color.RED + "[Wrong mode]: %d"%rospy.get_param('mode') + color.END )
+            print(color.RED + "[INFO] Wrong mode: %d"%rospy.get_param('mode') + color.END )
             robot_start = False
             roboat_status = False
             sys.exit()
@@ -235,7 +235,7 @@ def rotate_callibrate():
             break
         else: # 양수: 반시계방향 회전 | 음수: 시계방향 회전
             twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = angular_velocity
-            print("[Patrol]: Rotating...")
+            print(color.GREEN + "[Patrol]" + color.END + "Rotating...")
             pub_twist.publish(twist)
 
         if rospy.get_param('mode') == 1:
@@ -291,7 +291,7 @@ def is_reached_position():
                     # while을 계속 돌면서 수행될 곳, 아무일도 없이 넘어가야 함.    
                     else:
                         go_patrol_point(x_goal,y_goal)
-                        print("[Patrol]: Get ready for starting...")
+                        print(color.GREEN + "[Patrol]" + color.END + " Get ready for starting...")
                 # 출발 대기 중이더라도 Navigation mode로 전환되면 현재 작업 중단
                 if rospy.get_param('mode') == 1:
                     break
@@ -302,7 +302,7 @@ def is_reached_position():
             switch_check = False
             
         elif robot_start == True and robot_status == False : # 출발은 했는데 도착은 못했으면
-            print("[Patrol]: Turtlebot on the move...")
+            print("Turtlebot on the move...\n")
     
         elif robot_start == True and robot_status == True: # 출발도 했고 도착도 했다면
             robot_start = False
@@ -316,7 +316,7 @@ def is_reached_position():
             else:
                 rotate_callibrate()
 
-            print(color.GREEN +'='*30 + color.END)
+            print('\n'+ color.GREEN +'='*30 + color.END)
             print(color.GREEN + "[Patrol]: Rotation finished!!!"+ color.END)
             print(color.GREEN + '='*30 + color.END + '\n')
             # 사람이 존재하지 않으면
@@ -352,21 +352,21 @@ def set_patrol_coordinate():
         print(color.RED + "잘못 입력하셨습니다. 프로그램을 종료합니다" + color.END)
         sys.exit()
 
-    print("\n=======================")
+    print("=======================")
     print("BOTTOM_LEFT:",BOTTOM_LEFT)
     print("BOTTOM_RIGHT:",BOTTOM_RIGHT)
     print("TOP_LEFT:",TOP_LEFT)
     print("TOP_RIGHT:",TOP_RIGHT)
     print("ORIENT:",ORIENT)
     print("CALLIBRATE_ORIENT:",CALLIBRATE_ORIENT)
-    print("=======================")
+    print("=======================\n")
     
 
-    confirm = raw_input("입력값이 정확한지 확인해주세요.(y/n)")
+    confirm = raw_input("\n입력값이 정확한지 확인해주세요(y/n)")
     if confirm == 'y':
         print(color.GREEN + "입력이 확인되었습니다. 순찰모드를 실행합니다." + color.END)
     else:
-        print(color.RED +"입력 확인이 올바르지 않습니다. 프로그램을 종료합니다." + color.END)
+        print(color.RED +"입력 값이 올바르지 않습니다. 프로그램을 종료합니다." + color.END)
         sys.exit()
 
 #----------------------------------------------Main(검증완료)---------------------------------------------
