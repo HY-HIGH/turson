@@ -178,7 +178,7 @@ def navigation():
     rospy.Subscriber('/real_pose',PoseStamped,cb_real_pose)
     rospy.Subscriber('/darknet_ros/found_object',ObjectCount,cb_box_count)           
 
-    message_rate = rospy.Rate(10)
+    message_rate = rospy.Rate(1)
     rate = rospy.Rate(10) # 발행 속도 10hz 
     while not rospy.is_shutdown(): #네비게이션 노드 유지
         
@@ -261,7 +261,7 @@ def navigation():
             robot_destination.pose.orientation.w = current_pose.pose.orientation.w 
             
             pub_destination.publish(robot_destination)      # 퍼블리시 할 항목
-                
+            global_result = False    
             while True:
                 if global_result == True: # 도착하면
                     print (color.YELLOW + "[Navigation] : Goal Reached , Now Wait"+color.END)
@@ -287,6 +287,7 @@ def navigation():
                         print(color.GREEN +"[INFO] : Patrol Mode Start" +color.END)
 
                     rospy.set_param('mode',0) #파라미터 변경
+                    global_result = False
                     # 패트롤 모드로 진입 -> 박스크기가 일정이상이면 그대로 패트롤
 
                     # 여기에서 파라미터를 바꾸어 줄것인지?
