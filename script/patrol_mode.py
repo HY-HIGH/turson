@@ -26,10 +26,11 @@ def patrol_mode():
         global robot_start
         global robot_status
         global current_pose
-        if rospy.get_param('mode') == 0 :
+        main_mode = rospy.get_param('mode')
+        if main_mode == 0 :
             print(color.GREEN + "[Patrol mode]: %d"%rospy.get_param('mode') + color.END)
             is_reached_position()
-        elif rospy.get_param('mode') == 1:
+        elif main_mode == 1:
             print(color.YELLOW + "[Navigation mode]: %d"%rospy.get_param('mode')+ color.END)
             calculate_shortest_distance_between_robot_and_patrol_point()
             robot_start = False

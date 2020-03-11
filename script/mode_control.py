@@ -127,7 +127,8 @@ if __name__ == '__main__':
         global current_pose       # 현재 robot의 위치
         global robot_status
         global DISTANCE_MARGIN    # 정지를 위한 여유 거리
-
+        enough_distance = 75000
+        too_far_distance = 25000
         global_x_mid = 0          # Person detection box의 x 좌표의 중앙값
         global_box_size = 0       # Person detection box의 크기값
         robot_status = False      # 로봇의 현재지점 도착여부 수신

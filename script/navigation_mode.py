@@ -2,6 +2,7 @@
 #-*- coding:utf-8 -*-
 #==================== 의존성 패키지 및 메시지 ==================== 
 # 패키지
+import sys
 import math                                              #삼각함수 등 
 import rospy                                             #로스 파이 패키지
 from random import *
@@ -38,11 +39,8 @@ current_pose                    = 0
 def cb_real_pose(real_pose):
     global current_pose
     current_pose = real_pose
-# 현재 메인 모드 업데이트 ([모드 컨트롤 노드] 모드)       
-def cb_mode(mode):                        
-    global global_mode
-    global_mode = mode.data
-    print ('mode : ',global_mode)
+   
+
 
 def cb_box_count(box_count) :
     global global_box_count     
@@ -78,7 +76,7 @@ def cb_result(result):
 # 시간 홀드 함수
 def waiting_timer(second):
     time_end = time.time() + second
-    print ("waiting %d second"%(second))
+    print (color.YELLOW +"[Navigation] : waiting %d second"%(second) + color.END)
     while True:
         if time.time() > time_end:
             break
@@ -93,9 +91,10 @@ def angle_transform():
     else :
         transformed_angle = angle_60
     
-    print ("radians angle         : ",angle_radian)
+    #print ("[Navigation]radians angle         : ",angle_radian)
+    print ( color.YELLOW +"[Navigation] : Calculation Finished : " +color.END)
 
-    print ("transformed angle     : ",transformed_angle)
+    print ( color.YELLOW +"[Navigation] : Calculated Angle :{} ".format(transformed_angle) +color.END)
 
 
     return angle_radian
@@ -119,11 +118,12 @@ def calculate_coordinate():
 
     cal_position_x = (current_pose.pose.position.x  + (distance_person * math.cos(transformed_angle)))
     cal_position_y = (current_pose.pose.position.y  + (distance_person * math.sin(transformed_angle)))
+    print ( color.YELLOW +"[Navigation] : Calculated Destination : ({},{}) ".format(cal_position_x,cal_position_y) +color.END)
     
     return cal_position_x,cal_position_y    
 
 def box_size_2_distance(): # 박스크기가 5000 이하나 75000이상이면 패스 
-    print ('box_size :',global_box_size)
+    print ( color.YELLOW +'[Navigation] : Box Size : {}'.format(global_box_size) + color.END)
    
     # if 5000 <= global_box_size < 6500 : 
     #     distance_person = 5.5
@@ -146,21 +146,15 @@ def box_size_2_distance(): # 박스크기가 5000 이하나 75000이상이면 �
     # else :
     #     pass
     if 25000 <= global_box_size < 75000 :
-        print("----------------------")
-        print("now robot go to person") 
+        #print("----------------------")
+        print(color.YELLOW +"[Navigation] : Now Robot Calculate The Destination "+color.END) 
         distance_person = 1.0
         return distance_person
     else :
-        print("no need to navigation")
+        print(color.YELLOW +"[Navigation] : No Need To Calculate"+color.END)
         return 0 
 
-
-
-# 정지 함수
-def stop_robot():
-    print('stop_robot')
-
-
+        #color.YELLOW + +color.END
 
 # mode 가 1이 되면 시작
 # 메인 함수    ## 대대적인 수정
@@ -169,6 +163,9 @@ def navigation():
     global global_navigation_status
     global global_mode
     global global_no_person
+    twist = Twist()
+
+    #rospy.set_param('mode',0) #테스트 용
 
 
     rospy.init_node('navigation', anonymous=False)                                           # 노드 초기화 #노드이름
@@ -181,9 +178,10 @@ def navigation():
     rospy.Subscriber('/real_pose',PoseStamped,cb_real_pose)
     rospy.Subscriber('/darknet_ros/found_object',ObjectCount,cb_box_count)           
 
-    message_rate = rospy.Rate(1)
+    message_rate = rospy.Rate(10)
     rate = rospy.Rate(10) # 발행 속도 10hz 
     while not rospy.is_shutdown(): #네비게이션 노드 유지
+        
         global_mode = rospy.get_param('mode') # 모드를 받아오면 시작
 
         if global_mode == 1:# 센트럴 라이징 완료 후
@@ -200,15 +198,16 @@ def navigation():
                         angular_velocity = -0.1
                     else :
                         angular_velocity = 0
+                    
                     twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = angular_velocity
                     pub_twist.publish(twist)
-                    print("[INFO] : Centralizing...Before Navigation")
-                    print("[INFO] : x_mid :{}".format(global_x_mid));print('\n')
+                    print(color.YELLOW + "[Navigation] : Centralizing...Before Navigation"+color.END)
+                    print(color.YELLOW + "[Navigation] : x_mid :{}".format(global_x_mid)+color.END)
             
                     if 0.48 < global_x_mid < 0.52 : # xmid 가 0.5 근처가 되면 정지
                         twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
                         pub_twist.publish(twist)
-                        print("[INFO]: Centrallizing Finished")
+                        print(color.YELLOW + "[Navigation] : Centrallizing Finished"+color.END)
                         break
                  
                 else: # 사람이 없으면 
@@ -218,7 +217,7 @@ def navigation():
                         
                         second = 10 # x 초 주변 스캔                
                         time_final = time.time() + second
-                        print ("waiting %d second"%(second))
+                        print (color.YELLOW + "[Navigation] : Lost Person, Now Searching While %d Seconds"%(second)+color.END)
 
                         if global_box_count > 0: 
                             break # 223 줄 break
@@ -249,7 +248,7 @@ def navigation():
                 rospy.set_param('mode',0) #센트럴 모드 진입 후  10초 후에도 사람이 없으면 패트롤 모드 강제 전환 
                 continue
 #----------------------------------------------------------------------------------------------------
-            print("[INFO]: Start Navigation")
+            print(color.YELLOW + "[Navigation] : Start Navigation"+color.END)
             
             robot_destination = PoseStamped()  # 객체 선언 
             cal_x,cal_y = calculate_coordinate() 
@@ -265,27 +264,27 @@ def navigation():
                 
             while True:
                 if global_result == True: # 도착하면
-                    print ("[INFO] : Goal Reached , Now Wait")
+                    print (color.YELLOW + "[Navigation] : Goal Reached , Now Wait"+color.END)
                 
                     if global_box_count > 0  : #사람이 있다
                         while True:
-                            print ("[INFO] : Waiting...Until Clear|size:{}".format(global_box_size))
+                            print (color.YELLOW + "[Navigation] : Waiting...Until Clear|size:{}".format(global_box_size)+color.END)
                             if (global_box_size < 25000) and (global_box_count > 0):
-                                print("[INFO] : Person Clear")
-                                print("[INFO] : Patrol Mode Start")
+                                print(color.YELLOW + "[Navigation] : Person Clear"+color.END)
+                                print(color.YELLOW + "[Navigation] : Patrol Mode Start"+color.END)
                                 break
-                            elif (global_box_count = 0) :
-                                print("[INFO] : Patrol Mode Start After 3 second ")
-                                waiting_timer(3) 
-                                print("[INFO] : Patrol Mode Start")
+                            elif (global_box_count == 0) :
+                                print(color.GREEN + "[INFO] : Patrol Mode Start After 5 second "+color.END)
+                                waiting_timer(5) 
+                                print(color.GREEN + "[INFO] : Patrol Mode Start"+color.END)
                                 break 
                             else:
                                 pass    
                         message_rate.sleep()
-                    elif global_box_count = 0 : # 사람이 없다
-                        print("[INFO] : Patrol Mode Start After 3 second ")
-                        waiting_timer(3)  
-                        print("[INFO] : Patrol Mode Start")
+                    elif global_box_count == 0 : # 사람이 없다
+                        print(color.GREEN +"[INFO] : Patrol Mode Start After 5 second " +color.END)
+                        waiting_timer(5)  
+                        print(color.GREEN +"[INFO] : Patrol Mode Start" +color.END)
 
                     rospy.set_param('mode',0) #파라미터 변경
                     # 패트롤 모드로 진입 -> 박스크기가 일정이상이면 그대로 패트롤
@@ -294,13 +293,13 @@ def navigation():
 
                     break
                 else :
-                    print ("[INFO] : Going To Destination")
+                    print (color.YELLOW + "[Navigation] : Going To Destination"+color.END)
                 rate.sleep()
 
         elif global_mode == 0:
-            print("[INFO]: Patrol Mode ")
+            print(color.GREEN + "[INFO]: Patrol Mode "+color.END)
         else:
-            print("[INFO]: ERROR")
+            print(color.RED + "[INFO]: ERROR"+color.END)
 
 
 
@@ -311,8 +310,13 @@ def navigation():
 
 if __name__ == '__main__':
     try:
-       
-        navigation()
+        confirm = raw_input(color.RED+" 네비게이션 모드를 실행 하시겠습니까?.(y/n)"+ color.END)
+        if confirm == 'y':
+            print(color.YELLOW + "입력이 확인되었습니다. 네비게이션 모드를 실행합니다." + color.END)
+            navigation()
+        else:
+            print(color.RED +"입력 확인이 올바르지 않습니다. 프로그램을 종료합니다." + color.END)
+            sys.exit()
        
     except rospy.ROSInterruptException:
         pass
