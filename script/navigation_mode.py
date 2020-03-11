@@ -193,9 +193,9 @@ def navigation():
                 global global_x_mid
                 if global_box_count > 0 :  #사람이 있으면
                     if global_x_mid <= 0.48:
-                        angular_velocity = 0.1
+                        angular_velocity = 0.07
                     elif global_x_mid >= 0.52:
-                        angular_velocity = -0.1
+                        angular_velocity = -0.07
                     else :
                         angular_velocity = 0
                     
@@ -224,10 +224,10 @@ def navigation():
 
                         while True:
                             if global_x_mid <= 0.48:
-                                angular_velocity = 0.1
+                                angular_velocity = 0.07
 
                             elif global_x_mid >= 0.52:
-                                angular_velocity = -0.1
+                                angular_velocity = -0.07
 
                             else :
                                 angular_velocity = 0

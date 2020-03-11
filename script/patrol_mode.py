@@ -26,7 +26,7 @@ def patrol_mode():
         global robot_start
         global robot_status
         global current_pose
-        main_mode = rospy.get_param('mode')
+        main_mode = rospy.g et_param('mode')
         if main_mode == 0 :
             print(color.GREEN + "[Patrol mode]: %d"%rospy.get_param('mode') + color.END)
             is_reached_position()
@@ -273,7 +273,7 @@ def is_reached_position():
                     abs(past_position.y - current_pose.pose.position.y) > (DISTANCE_MARGIN):
                     print(color.GREEN + "\n================" + color.END)
                     print(color.GREEN + "[Patrol]: Start!" + color.END)
-                    print(color.GREEN + "================" + color.END)
+                    print(color.GREEN + "================\n" + color.END)
                     break
                 # 과거의 위치와 현재의 위치가 거의 유사한 경우 go_patrol_point를 지속적으로 publish한다.
                 else:
@@ -318,7 +318,7 @@ def is_reached_position():
 
             print(color.GREEN +'='*30 + color.END)
             print(color.GREEN + "[Patrol]: Rotation finished!!!"+ color.END)
-            print(color.GREEN + '='*30 + color.END)
+            print(color.GREEN + '='*30 + color.END + '\n')
             # 사람이 존재하지 않으면
             if global_box_count == 0 or rospy.get_param('mode') == 1:
                 pass
@@ -347,7 +347,7 @@ def set_patrol_coordinate():
         ORIENT = [135,45,315,315]; CALLIBRATE_ORIENT = [315,225,135,135]
     elif patrol_select == 3:
         BOTTOM_LEFT = [6,0]; BOTTOM_RIGHT = [0,0]; TOP_LEFT = [4,0]; TOP_RIGHT = [2,0] # 4공학관 5층
-        ORIENT = [0,0,0,180];CALLIBRATE_ORIENT = [180,180,180,360]
+        ORIENT = [0,0,0,180];CALLIBRATE_ORIENT = [360,180,180,180]
     else:
         print(color.RED + "잘못 입력하셨습니다. 프로그램을 종료합니다" + color.END)
         sys.exit()
