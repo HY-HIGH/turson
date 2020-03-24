@@ -75,3 +75,7 @@
 >roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch    
 
 >rosrun map_server map_saver -f ~/map
+
+
+## ISSUE
+[ WARN] [1585087556.049474980, 262.236000000]: The robot's start position is off the global costmap. Planning will always fail, are you sure the robot has been properly localized?
