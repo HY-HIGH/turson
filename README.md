@@ -31,13 +31,23 @@ TURSON Project
 [![Gmapping test](https://img.youtube.com/vi/Ke1WHCdHJag/0.jpg)](https://www.youtube.com/watch?v=Ke1WHCdHJag) 
 ### 1.1.3. Navigation test
 [![Navigation test](https://img.youtube.com/vi/6AQ4OooEAmc/0.jpg)](https://www.youtube.com/watch?v=6AQ4OooEAmc) 
+### 1.1.4. Demo
+[![Demo](https://img.youtube.com/vi/8N3xCYlW6cI/0.jpg)](https://www.youtube.com/watch?v=8N3xCYlW6cI) 
+### 1.1.5. SLAM Cartographer Simulation
+[![SLAM Cartographer Simulation](https://img.youtube.com/vi/_DVfIC6MZes/0.jpg)](https://www.youtube.com/watch?v=_DVfIC6MZes) 
+### 1.1.6. "SLAM + Navigation" Simulation
+[!["SLAM + Navigation" Simulation](https://img.youtube.com/vi/yzAIdJJ0tbY/0.jpg)](https://www.youtube.com/watch?v=yzAIdJJ0tbY)
 
 - - -
 ## 1.2. Package 설명
-### 1.2.1 Rqt graph of mode control
-Node 실행시 만들어지는 rqt graph입니다.
+### 1.2.1 Rqt graph and flow chart
+실행시 만들어지는 rqt graph입니다.
 
 ![Rqt_graph](./image/rosgraph_color.png)
+
+실행시 만들어지는 flow chart입니다.
+![Flow_chart](./image/flow_chart.jpg)
+
 
 ### 1.2.2 구조 설명
 
@@ -47,8 +57,10 @@ Node 실행시 만들어지는 rqt graph입니다.
 |mode_control.py|로봇의 Person detection 값을 기반으로 적절한 모드값 변경|
 |move_turson.py|이동명령을 수행하는 노드|
 |navigation_mode.py|특정 구역 이내로 들어온 사람에게 접근제한 임무를 수행토록 목적지 지정|
+|parameter_monitor.py|로봇이 동작하며 파라미터 값을 실시간 확인할 때 쓰이는 노드|
 |patrol_mode.py|순찰지역을 순환하면서 주변지역을 스캔하는 임무|
 |turson_box_data.py|순찰 혹은 Navigation 임무를 수행하면서 Person detection 값을 수신하고 필요한 노드로 값을 전달|
+|real_pose.py|로봇의 현재위치를 publish하는 노드|
 
 
 
