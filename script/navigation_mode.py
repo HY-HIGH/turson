@@ -263,28 +263,29 @@ def navigation():
             pub_destination.publish(robot_destination)      # 퍼블리시 할 항목
             global_result = False    
             while True:
+                
                 if global_result == True: # 도착하면
                     print (color.YELLOW + "[Navigation] : Goal Reached , Now Wait"+color.END)
                 
-                    if global_box_count > 0  : #사람이 있다
-                        while True:
-                            print (color.YELLOW + "[Navigation] : Waiting...Until Clear|size:{}".format(global_box_size)+color.END)
-                            if (global_box_size < 25000) and (global_box_count > 0):
-                                print(color.YELLOW + "[Navigation] : Person Clear"+color.END)
-                                print(color.YELLOW + "[Navigation] : Patrol Mode Start"+color.END)
-                                break
-                            elif (global_box_count == 0) :
-                                print(color.GREEN + "[INFO] : Patrol Mode Start After 5 second "+color.END)
-                                waiting_timer(5) 
-                                print(color.GREEN + "[INFO] : Patrol Mode Start"+color.END)
-                                break 
-                            else:
-                                pass    
+                    # if global_box_count > 0  : #사람이 있다
+                    while True:
+                        print (color.YELLOW + "[Navigation] : Waiting...Until Clear|size:{}".format(global_box_size)+color.END)
+                        if (global_box_size < 25000) and (global_box_count > 0):
+                            print(color.YELLOW + "[Navigation] : Person Clear"+color.END)
+                            print(color.YELLOW + "[Navigation] : Patrol Mode Start"+color.END)
+                            break
+                        elif (global_box_count == 0) :
+                            print(color.GREEN + "[INFO] : Patrol Mode Start After 5 second "+color.END)
+                            waiting_timer(5) 
+                            print(color.GREEN + "[INFO] : Patrol Mode Start"+color.END)
+                            break 
+                        else:
+                            pass    
                         message_rate.sleep()
-                    elif global_box_count == 0 : # 사람이 없다
-                        print(color.GREEN +"[INFO] : Patrol Mode Start After 5 second " +color.END)
-                        waiting_timer(5)  
-                        print(color.GREEN +"[INFO] : Patrol Mode Start" +color.END)
+                    # elif global_box_count == 0 : # 사람이 없다
+                    #     print(color.GREEN +"[INFO] : Patrol Mode Start After 5 second " +color.END)
+                    #     waiting_timer(5)  
+                    #     print(color.GREEN +"[INFO] : Patrol Mode Start" +color.END)
 
                     rospy.set_param('mode',0) #파라미터 변경
                     global_result = False

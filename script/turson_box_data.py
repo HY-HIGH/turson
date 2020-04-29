@@ -15,6 +15,7 @@ import time
 
 resolution = [[1280.0,960.0],[1280.0,720.0],[640.0,480.0],[640.0,360.0]]
 pick_resolution = 0
+# temp_count_list = [] #글로벌로 선언 
 
 def cb_bounding_boxes(image_data): #image_data 객체 리스트
     #rospy.set_param('person_detect',1) # 사람 포착
@@ -29,7 +30,7 @@ def cb_bounding_boxes(image_data): #image_data 객체 리스트
     target_box = [] # 가장 큰박스 정보 4가지 -> 퍼블리시 
 
     box_count = len(image_data.bounding_boxes) # 박스의 개수
-    #temp_boxes = []# 리스트로 만들음 list()
+    temp_boxes = []# 리스트로 만들음 list()
     temp_boxes_size = [] #사이즈만 모아 놓은 리스트 
 
     for count in range (box_count): # 0번째 박스 부터 하나씩 대입한다.
@@ -91,6 +92,25 @@ def cb_bounding_boxes(image_data): #image_data 객체 리스트
 
     #print ("x_mid : ",x_mid) #0
     #print ("y_mid : ",y_mid) #0
+    
+    ## Box Count
+    # bool_person = (box_count / box_count)## 존재 0 or 1
+    # temp_count_list.append(bool_person)
+
+    # if len(temp_count_list) > 100:
+    #     les.pop(0)
+    #     print("list count    : ",len(temp_count_list))
+    #     print("last 10 index : ",temp_count_list[90:99])
+    # float average_list
+    # average_list = float(sum(temp_count_list)/len(temp_count_list))
+    # print ("average          : ",average_list)
+    # if average_list > 0.8:
+    #     average_box_count = 1
+    # elif average_list < 0.8:
+    #     average_box_count = 0 
+    
+    # print ("is there person? : ",average_box_count)
+    
     print ("box_size : ",box_size)
     print ("box_count : ",box_count)
 
@@ -107,6 +127,7 @@ def node_init():
     rospy.init_node('turson_box_data', anonymous=False)# 노드 초기화 #노드이름
     rate = rospy.Rate(10) # 발행 속도 10hz 
     rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,cb_bounding_boxes)
+    rospy.Subscriber('/darknet_ros/found_object',ObjectCount,cb_box_count)           
     
     resol_width = resolution[pick_resolution][0] 
     resol_height = resolution[pick_resolution][1]

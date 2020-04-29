@@ -28,7 +28,7 @@
   <rosparam command="load" ns="darknet_ros" file="$(arg network_param_file)"/>
 
   <!-- Start darknet and ros wrapper -->
-  <node pkg="usb_cam" name="usb_cam" type="usb_cam_node" output="screen"></node>
+  <!-- <node pkg="usb_cam" name="usb_cam" type="usb_cam_node" output="screen"></node> -->
   <node pkg="darknet_ros" type="darknet_ros" name="darknet_ros" output="screen" launch-prefix="$(arg launch_prefix)">
     <param name="weights_path"          value="$(arg yolo_weights_path)" />
     <param name="config_path"           value="$(arg yolo_config_path)" />
