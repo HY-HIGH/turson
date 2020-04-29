@@ -127,7 +127,7 @@ def node_init():
     rospy.init_node('turson_box_data', anonymous=False)# 노드 초기화 #노드이름
     rate = rospy.Rate(10) # 발행 속도 10hz 
     rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,cb_bounding_boxes)
-    rospy.Subscriber('/darknet_ros/found_object',ObjectCount,cb_box_count)           
+    # rospy.Subscriber('/darknet_ros/found_object',ObjectCount,cb_box_count)           
     
     resol_width = resolution[pick_resolution][0] 
     resol_height = resolution[pick_resolution][1]
