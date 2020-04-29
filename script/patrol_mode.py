@@ -292,6 +292,11 @@ def is_reached_position():
                     else:
                         go_patrol_point(x_goal,y_goal)
                         print("[Patrol]: Get ready for starting...")
+                        print("Error_stack: {}".format(is_reached_position.error_stack))
+                        is_reached_position.error_stack += 1
+                        if is_reached_position.error_stack > ERROR_THRESHEHOLD:
+                            switch_patrol_point()
+                            is_reached_position.error_stack = 0
                 # 출발 대기 중이더라도 Navigation mode로 전환되면 현재 작업 중단
                 if rospy.get_param('mode') == 1:
                     break
@@ -391,12 +396,14 @@ if __name__ == '__main__':
         YAW_MARGIN = 0.3                  # 회전 멈춤위치에 대한 yaw값 기준
         DISTANCE_MARGIN = 0.1             # 현재 위치와 Patrol point 사이의 허용 오차
         RATE = rospy.Rate(10)
-        
+        ERROR_THRESHEHOLD = int(input("ERROR_THRESHEHOLD값 입력(Default = 150): "))
+
         twist = Twist()                  # 로봇의 제자리 회전을 위해 필요
         current_pose = PoseStamped()     # 현재 로봇의 위치 실시간 update
         robot_start = False
         robot_status = False
         global_box_count = 0
+        is_reached_position.error_stack = 0
         #---------------------Set publisher & subscriber----------
         # 3 Publisher: 
         #   1) Twist:turtlebot 제자리 회전을 위해 위해 필요
