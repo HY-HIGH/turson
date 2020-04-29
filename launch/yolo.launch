@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <launch>
+  <node pkg="ocam" type="ocam" name="ocam" output="screen">
+    <param name="resolution"    value="0"/> <!-- 0: 1280x960, 1: 1280x720, 2: 640x480, 3: 640x360 -->
+    <param name="frame_rate"    value="30"/>
+    <param name="exposure"      value="400"/>
+    <param name="gain"          value="50"/>
+    <param name="wb_blue"       value="50"/>
+    <param name="wb_red"        value="160"/>
+    <param name="auto_exposure" value="false"/>
+    <param name="show_image"    value="true"/>
+  </node>
   <!-- Console launch prefix -->
   <arg name="launch_prefix" default=""/>
   <arg name="image" default="/usb_cam/image_raw" />

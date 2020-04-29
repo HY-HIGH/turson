@@ -6,12 +6,15 @@
 # box_size
 # box_count
 # -------------  
-
+# 0: 1280x960, 1: 1280x720, 2: 640x480, 3: 640x360
 
 from darknet_ros_msgs.msg import BoundingBoxes #  이미지 정보 메세지 타입
 from turson.msg import Box_data #커스텀 메시지
 import rospy #로스 파이 패키지
 import time
+
+resolution = [[1280.0,960.0],[1280.0,720.0],[640.0,480.0],[640.0,360.0]]
+pick_resolution = 0
 
 def cb_bounding_boxes(image_data): #image_data 객체 리스트
     #rospy.set_param('person_detect',1) # 사람 포착
@@ -41,8 +44,8 @@ def cb_bounding_boxes(image_data): #image_data 객체 리스트
         float(temp_y_max)
         
         #카메라 설정에 따라 변함
-        frame_width = 640.0 #가로 
-        frame_height = 480.0 #세로 
+        frame_width = resol_width #가로 
+        frame_height = resol_height #세로 
         
         temp_x_length = temp_x_max - temp_x_min
         temp_y_length = temp_y_max - temp_y_min
@@ -73,9 +76,9 @@ def cb_bounding_boxes(image_data): #image_data 객체 리스트
     float(y_min)
     float(y_max)
     
-    #카메라 설정에 따라 변함
-    frame_width = 640.0 #가로 
-    frame_height = 480.0 #세로 
+    #카메라 설정에 따라 변함  0: 1280x960, 1: 1280x720, 2: 640x480, 3: 640x360
+    frame_width = resol_width #가로 
+    frame_height = resol_height #세로 
     
     x_length = x_max - x_min
     y_length = y_max - y_min
@@ -102,8 +105,12 @@ def cb_bounding_boxes(image_data): #image_data 객체 리스트
 
 def node_init():
     rospy.init_node('turson_box_data', anonymous=False)# 노드 초기화 #노드이름
-    rate = rospy.Rate(1) # 발행 속도 10hz 
+    rate = rospy.Rate(10) # 발행 속도 10hz 
     rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,cb_bounding_boxes)
+    
+    resol_width = resolution[pick_resolution][0] 
+    resol_height = resolution[pick_resolution][1]
+
     while not rospy.is_shutdown():
         #print('ok')
         rate.sleep
