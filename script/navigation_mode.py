@@ -22,12 +22,14 @@ from move_base_msgs.msg     import MoveBaseActionResult  # result 메시지
 from geometry_msgs.msg      import Twist          # 로봇의 각종 움직임 제어,
 from text_color import color 
 #==================== 전역 변수 설정 ==================== 
+MAX_LIST_COUNT = 30
+COUNT_THREASH_HOLD = 0.2
 # 모드 관련
 global_mode                     = 0 
 global_result                   = False # 도착 여부
-
-
-
+average_box_count = 0
+global_box_count = 0
+temp_count_list = [] #글로벌로 선언 
 # 박스 정보
 global_x_mid                    = 0
 global_box_size                 = 0 
@@ -43,10 +45,35 @@ def cb_real_pose(real_pose):
 
 
 def cb_box_count(box_count) :
-    global global_box_count     
+    global global_box_count
     global_box_count = box_count.count
-    
 
+    # Box Count
+    if box_count.count > 0:
+        bool_person = (box_count.count / box_count.count)## 존재 0 or 1
+    else :
+        bool_person = 0
+    temp_count_list.append(bool_person)
+
+    if len(temp_count_list) > MAX_LIST_COUNT:
+        temp_count_list.pop(0)
+        # print("list count    : ",len(temp_count_list))
+        # print("last 10 index : ",temp_count_list[20:29])
+    #float (average_list)
+    sum_list=float(sum(temp_count_list))
+    list_length= float (len(temp_count_list))
+    average_list = float(sum_list/list_length)
+    # print ("average          : ",average_list)
+    if average_list > COUNT_THREASH_HOLD:
+        average_box_count = 1
+    elif average_list <= COUNT_THREASH_HOLD:
+        average_box_count = 0 
+    
+    # print ("is there person? : ",average_box_count)
+    
+    # print ("box_count : ",average_box_count)
+    # print ("______________________________________")
+    
 # 바운딩 박스 업데이트   
 def cb_bounding_box(image_data): #image_data 객체 리스트
 
