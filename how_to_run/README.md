@@ -4,6 +4,40 @@
 작성일 : 2020.03.05
 ```
 ---
+## Turson | Master
+
+    roslaunch turson turson.launch   
+   
+    roslaunch turson yolo.launch  
+
+
+
+
+## Remote_PC | Host
+
+ssh nvidia@192.168.0.8  
+
+    rosrun turson mode_control.py  
+    rosrun turson patrol_mode.py  
+    rosrun turson navigation_mode.py  
+
+roslaunch turson rviz_navigation.launch  
+
+## ETC
+
+    roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch  
+    roslaunch turtlebot3_slam turtlebot3_slam.launch slam_methods:=gmapping  
+
+    rosrun map_server map_saver -f ~/map  
+    
+## Lagacy
+    roslaunch turtlebot3_bringup turtlebot3_robot.launch  
+    roslaunch turtlebot3_navigation turtlebot3_navigation.launch map_file:=$HOME/map.yaml  
+
+    rosrun turson mode_control.py  
+    rosrun turson patrol_mode.py  
+    rosrun turson navigation_mode.py  
+
 ## 0. Time Sync 
 
 |요약|코드|설명|
@@ -54,7 +88,7 @@
     |-----|-----|-----|
     |구동|roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch||  
     |GMAPPING|roslaunch turtlebot3_slam turtlebot3_slam.launch slam_methods:=gmapping||  
-    |맵 저장|rrosrun map_server map_saver -f ~/map||  
+    |맵 저장|rosrun map_server map_saver -f ~/map||  
 <!-- |YOLO|roslaunch darknet_ros darknet_ros.launch||   -->
 
 ---
