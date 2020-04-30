@@ -46,7 +46,7 @@ def cb_real_pose(real_pose):
 
 def cb_box_count(box_count) :
     global global_box_count
-    global_box_count = box_count.count
+    # global average_box_count
 
     # Box Count
     if box_count.count > 0:
@@ -67,8 +67,9 @@ def cb_box_count(box_count) :
     if average_list > COUNT_THREASH_HOLD:
         average_box_count = 1
     elif average_list <= COUNT_THREASH_HOLD:
-        average_box_count = 0 
+        average_box_count = 0
     
+    global_box_count = average_box_count
     # print ("is there person? : ",average_box_count)
     
     # print ("box_count : ",average_box_count)
