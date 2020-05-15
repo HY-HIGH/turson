@@ -12,7 +12,8 @@ from darknet_ros_msgs.msg import BoundingBoxes #  이미지 정보 메세지 타
 from turson.msg import Box_data #커스텀 메시지
 import rospy #로스 파이 패키지
 import time
-
+resol_width = 0
+resol_height = 0
 resolution = [[1280.0,960.0],[1280.0,720.0],[640.0,480.0],[640.0,360.0]]
 pick_resolution = 0
 # temp_count_list = [] #글로벌로 선언 
@@ -124,6 +125,8 @@ def cb_bounding_boxes(image_data): #image_data 객체 리스트
     
 
 def node_init():
+    global resol_width
+    global resol_height
     rospy.init_node('turson_box_data', anonymous=False)# 노드 초기화 #노드이름
     rate = rospy.Rate(10) # 발행 속도 10hz 
     rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,cb_bounding_boxes)

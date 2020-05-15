@@ -26,7 +26,7 @@ def patrol_mode():
         global robot_start
         global robot_status
         global current_pose
-        main_mode = rospy.g et_param('mode')
+        main_mode = rospy.get_param('mode')
         if main_mode == 0 :
             print(color.GREEN + "[Patrol mode]: %d"%rospy.get_param('mode') + color.END)
             is_reached_position()
