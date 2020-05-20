@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 #==================== 의존성 패키지 및 메시지 ==================== 
-#hot
+#hotfix test
 # 패키지
 import sys
 import math                                              #삼각함수 등 
