@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 #==================== 의존성 패키지 및 메시지 ==================== 
-# 패키지 마스터 수정
+# 패키지 마스터 수정 master edit
 import sys
 import math                                              #삼각함수 등 
 import rospy                                             #로스 파이 패키지
