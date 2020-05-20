@@ -2,11 +2,11 @@
   <!-- turtlebot3 world open -->
   <!-- <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"></include> -->\
   <!-- bring up node 실행 -->
-  <include file="$(find turtlebot3_bringup)/launch/turtlebot3_robot.launch"></include>
+  <!-- <include file="$(find turtlebot3_bringup)/launch/turtlebot3_robot.launch"></include> -->
   <!-- <arg name="model" value="$(arg model)" /> -->
   <!-- turtlebot3 navigation map file open -->  <!-- 만약에 map파일을 바꾸고 싶다면 아래의 map.yaml위치를 본인에게 맞게 수정하면 된다. -->
-  <arg name="map_file" default="$HOME/map.yaml"/> 
-  <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch"></include>
+  <!-- <arg name="map_file" default="$HOME/map.yaml"/> 
+  <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch"></include> -->
   
   <!-- turtlebot3 mode controller node open -->
   <!--  mode control parameter를 설정하고 mode control package를 실행한다.-->

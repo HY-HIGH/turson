@@ -13,7 +13,7 @@ def sleep(t):
 def sound_server():
     while not rospy.is_shutdown():
         if (rospy.get_param('person_detected') == 1):
-            if (rospy.get_param('person_warnig') == 1):
+            if (rospy.get_param('person_warning') == 1):
                 soundhandle.stopAll()
                 soundhandle.say('This is restricted area! please go back!')
                 sleep(4)
