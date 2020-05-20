@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 #==================== 의존성 패키지 및 메시지 ==================== 
-<<<<<<< HEAD
-# 패키지 마스터 수정 master edit
-=======
 # 패키지 time issue timeissue
 # 패키지 time issue network issue
 #hotfix test
 # 패키지
->>>>>>> time_issue
 import sys
 import math                                              #삼각함수 등 
 import rospy                                             #로스 파이 패키지
