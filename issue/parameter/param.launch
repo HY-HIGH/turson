@@ -1,0 +1,57 @@
+<!-- AMCL -->
+    <!-- particle filter -->
+    <param name="min_particles"             value="500"/>
+    <param name="max_particles"             value="3000"/>
+    <param name="initial_pose_x"            value="0.0"/>
+    <param name="initial_pose_y"            value="0.0"/>
+    <param name="initial_pose_a"            value="0.0"/>
+    <!-- laserscan -->
+    <param name="laser_max_range"           value="3.5"/>
+    <param name="laser_min_range"           value="1.0"/>
+
+
+<!-- dwa local planner -->
+
+# Robot Configuration Parameters
+  max_vel_x: 0.26
+  min_vel_x: -0.26
+
+  max_vel_y: 0.0
+  min_vel_y: 0.0
+
+# The velocity when robot is moving in a straight line
+  max_trans_vel:  0.26
+  min_trans_vel:  0.13
+
+  max_rot_vel: 1.82
+  min_rot_vel: 0.9
+
+  acc_lim_x: 2.5
+  acc_lim_y: 0.0
+  acc_lim_theta: 3.2 
+
+
+# Goal Tolerance Parametes
+  xy_goal_tolerance: 0.05
+  yaw_goal_tolerance: 0.17
+
+<!-- common costmap -->
+obstacle_range: 3.0
+raytrace_range: 3.5
+
+<!-- global costmap -->
+  update_frequency: 10.0
+  publish_frequency: 10.0
+  transform_tolerance: 0.5
+  
+<!-- local costmap -->
+
+  update_frequency: 10.0
+  publish_frequency: 10.0
+  transform_tolerance: 0.5  
+
+  static_map: false  
+  rolling_window: true
+  width: 3
+  height: 3
+  resolution: 0.05
