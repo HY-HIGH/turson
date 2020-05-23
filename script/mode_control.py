@@ -73,12 +73,18 @@ def mode_converter():
         # 사람이 가까이 있을 때: 갑자기 사람이 로봇에게 가까이 등장했을 때를 의미, 경고음만 내며 Navigation 모드로 전환하지 않는다.
         if  global_box_size > enough_distance: 
             print(color.GREEN + "[Patrol Mode]"+'Too Close, Warning'+ color.END)
+            rospy.set_param('person_detected',1)
+            rospy.set_param('person_warning',1)
         # 사람이 멀리 있을 때: 범위 밖에 존재하므로 순찰임무 계속 수행, 네비게이션을 하지 않는다    
         elif global_box_size < too_far_distance:
             print(color.GREEN + "[Patrol Mode]"+'Too Far, Safe'+ color.END)
+            rospy.set_param('person_detected',1)
+            rospy.set_param('person_warning',0)
         # 사람이 제한범위 이내로 들어왔을 때: 포착된 위치로 가기 위해 Navigation 모드로 전환
         elif (too_far_distance <= global_box_size <= enough_distance) : 
             print('Start Approach To Person')
+            rospy.set_param('person_detected',1)
+            rospy.set_param('person_warning',0)
             # 현재 위치 정지 작업 실시
             stop()
             # 정지 작업을 마쳤고 여전히 사람이 존재한다면: Navigation mode로 전환
