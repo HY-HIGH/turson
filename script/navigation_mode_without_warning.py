@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 #==================== 의존성 패키지 및 메시지 ==================== 
+# 패키지
 import sys
 import math                                              #삼각함수 등 
 import rospy                                             #로스 파이 패키지
@@ -43,7 +44,7 @@ def cb_real_pose(real_pose):
    
 
 
-def cb_box_count(box_count) : # 자체 큐를 사용, 평균값을 이용하여 검출 안정도 증가 
+def cb_box_count(box_count) :
     global global_box_count
     # global average_box_count
 
@@ -211,13 +212,9 @@ def navigation():
         
         global_mode = rospy.get_param('mode') # 모드를 받아오면 시작
 
-        if global_mode == 1:
+        if global_mode == 1:# 센트럴 라이징 완료 후
             global_no_person = False #사람 있음
             print("[INFO]: Navigation Mode Activate ")
-            rospy.set_param('person_detected',1)
-            rospy.set_param('person_warning',0)
-            
-
 
             while True: # 센트럴 라이징 시작 (중심에 올때까지 계속)
                 centralize_rate = rospy.Rate(10)
@@ -290,16 +287,12 @@ def navigation():
             robot_destination.pose.orientation.y = current_pose.pose.orientation.y 
             robot_destination.pose.orientation.z = current_pose.pose.orientation.z 
             robot_destination.pose.orientation.w = current_pose.pose.orientation.w 
-        
+            
             pub_destination.publish(robot_destination)      # 퍼블리시 할 항목
             global_result = False    
             while True:
                 
                 if global_result == True: # 도착하면
-                    rospy.set_param('person_detected',1)
-                    rospy.set_param('person_warning',1)
-                    
-                    
                     print (color.YELLOW + "[Navigation] : Goal Reached , Now Wait"+color.END)
                 
                     # if global_box_count > 0  : #사람이 있다
@@ -308,13 +301,11 @@ def navigation():
                         if (global_box_size < 25000) and (global_box_count > 0):
                             print(color.YELLOW + "[Navigation] : Person Clear"+color.END)
                             print(color.YELLOW + "[Navigation] : Patrol Mode Start"+color.END)
-                            
                             break
                         elif (global_box_count == 0) :
                             print(color.GREEN + "[INFO] : Patrol Mode Start After 5 second "+color.END)
                             waiting_timer(5) 
                             print(color.GREEN + "[INFO] : Patrol Mode Start"+color.END)
-                       
                             break 
                         else:
                             pass    
@@ -337,10 +328,6 @@ def navigation():
 
         elif global_mode == 0:
             print(color.GREEN + "[INFO]: Patrol Mode "+color.END)
-            rospy.set_param('person_detected',0)
-            rospy.set_param('person_warning',0)
-            rospy.set_param('person_cleared',0)
-           
         else:
             print(color.RED + "[INFO]: ERROR"+color.END)
 

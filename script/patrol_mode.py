@@ -342,37 +342,39 @@ def is_reached_position():
 def set_patrol_coordinate():
     global BOTTOM_LEFT; global BOTTOM_RIGHT; global TOP_LEFT; global TOP_RIGHT
     global ORIENT;global CALLIBRATE_ORIENT
-    patrol_select = int(input("[장소를 입력해주세요]\n1)Turtlebot \n2)1공학관 3층 \n3)4공학관 5층\n:"))
+    BOTTOM_LEFT = [-1,-3]; BOTTOM_RIGHT = [-1,0]; TOP_LEFT = [2,-3]; TOP_RIGHT = [2,0] # 4공학관 5층
+    ORIENT = [360,270,180,90];CALLIBRATE_ORIENT = [90,360,270,180]
+    # patrol_select = int(input("[장소를 입력해주세요]\n1)Turtlebot \n2)1공학관 3층 \n3)4공학관 5층\n:"))
 
-    if patrol_select == 1:
-        BOTTOM_LEFT = [-2,0.5]; BOTTOM_RIGHT = [-2,-0.5]; TOP_LEFT = [0.5,0.5]; TOP_RIGHT = [0.5,-0.5] # Simulation
-        ORIENT = [90,180,270,360]; CALLIBRATE_ORIENT = [270,360,90,180]
-    elif patrol_select == 2:
-        BOTTOM_LEFT = [-2,3]; BOTTOM_RIGHT = [0,0]; TOP_LEFT = [-5,-3]; TOP_RIGHT = [4,-2] # 1공학관 3층
-        ORIENT = [135,45,315,315]; CALLIBRATE_ORIENT = [315,225,135,135]
-    elif patrol_select == 3:
-        BOTTOM_LEFT = [6,0]; BOTTOM_RIGHT = [0,0]; TOP_LEFT = [4,0]; TOP_RIGHT = [2,0] # 4공학관 5층
-        ORIENT = [0,0,0,180];CALLIBRATE_ORIENT = [360,180,180,180]
-    else:
-        print(color.RED + "잘못 입력하셨습니다. 프로그램을 종료합니다" + color.END)
-        sys.exit()
+    # if patrol_select == 1:
+    #     BOTTOM_LEFT = [-2,0.5]; BOTTOM_RIGHT = [-2,-0.5]; TOP_LEFT = [0.5,0.5]; TOP_RIGHT = [0.5,-0.5] # Simulation
+    #     ORIENT = [90,180,270,360]; CALLIBRATE_ORIENT = [270,360,90,180]
+    # elif patrol_select == 2:
+    #     BOTTOM_LEFT = [-2,3]; BOTTOM_RIGHT = [0,0]; TOP_LEFT = [-5,-3]; TOP_RIGHT = [4,-2] # 1공학관 3층
+    #     ORIENT = [135,45,315,315]; CALLIBRATE_ORIENT = [315,225,135,135]
+    # elif patrol_select == 3:
+    #     BOTTOM_LEFT = [-1,-3]; BOTTOM_RIGHT = [-1,0]; TOP_LEFT = [2,-3]; TOP_RIGHT = [2,0] # 4공학관 5층
+    #     ORIENT = [360,270,180,90];CALLIBRATE_ORIENT = [90,360,270,180]
+    # else:
+    #     print(color.RED + "잘못 입력하셨습니다. 프로그램을 종료합니다" + color.END)
+    #     sys.exit()
 
-    print("\n=======================")
-    print("BOTTOM_LEFT:",BOTTOM_LEFT)
-    print("BOTTOM_RIGHT:",BOTTOM_RIGHT)
-    print("TOP_LEFT:",TOP_LEFT)
-    print("TOP_RIGHT:",TOP_RIGHT)
-    print("ORIENT:",ORIENT)
-    print("CALLIBRATE_ORIENT:",CALLIBRATE_ORIENT)
-    print("=======================")
+    # print("\n=======================")
+    # print("BOTTOM_LEFT:",BOTTOM_LEFT)
+    # print("BOTTOM_RIGHT:",BOTTOM_RIGHT)
+    # print("TOP_LEFT:",TOP_LEFT)
+    # print("TOP_RIGHT:",TOP_RIGHT)
+    # print("ORIENT:",ORIENT)
+    # print("CALLIBRATE_ORIENT:",CALLIBRATE_ORIENT)
+    # print("=======================")
     
 
-    confirm = raw_input("입력값이 정확한지 확인해주세요.(y/n)")
-    if confirm == 'y':
-        print(color.GREEN + "입력이 확인되었습니다. 순찰모드를 실행합니다." + color.END)
-    else:
-        print(color.RED +"입력 확인이 올바르지 않습니다. 프로그램을 종료합니다." + color.END)
-        sys.exit()
+    # confirm = raw_input("입력값이 정확한지 확인해주세요.(y/n)")
+    # if confirm == 'y':
+    #     print(color.GREEN + "입력이 확인되었습니다. 순찰모드를 실행합니다." + color.END)
+    # else:
+    #     print(color.RED +"입력 확인이 올바르지 않습니다. 프로그램을 종료합니다." + color.END)
+    #     sys.exit()
 
 #----------------------------------------------Main(검증완료)---------------------------------------------
 if __name__ == '__main__':
@@ -396,7 +398,7 @@ if __name__ == '__main__':
         YAW_MARGIN = 0.3                  # 회전 멈춤위치에 대한 yaw값 기준
         DISTANCE_MARGIN = 0.1             # 현재 위치와 Patrol point 사이의 허용 오차
         RATE = rospy.Rate(10)
-        ERROR_THRESHEHOLD = int(input("ERROR_THRESHEHOLD값 입력(Default = 150): "))
+        ERROR_THRESHEHOLD = 100 # int(input("ERROR_THRESHEHOLD값 입력(Default = 150): "))
 
         twist = Twist()                  # 로봇의 제자리 회전을 위해 필요
         current_pose = PoseStamped()     # 현재 로봇의 위치 실시간 update

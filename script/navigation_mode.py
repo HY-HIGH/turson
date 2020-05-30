@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 #==================== 의존성 패키지 및 메시지 ==================== 
-# 패키지
 import sys
 import math                                              #삼각함수 등 
 import rospy                                             #로스 파이 패키지
@@ -44,7 +43,7 @@ def cb_real_pose(real_pose):
    
 
 
-def cb_box_count(box_count) :
+def cb_box_count(box_count) : # 자체 큐를 사용, 평균값을 이용하여 검출 안정도 증가 
     global global_box_count
     # global average_box_count
 
@@ -153,30 +152,29 @@ def calculate_coordinate():
 def box_size_2_distance(): # 박스크기가 5000 이하나 75000이상이면 패스 
     print ( color.YELLOW +'[Navigation] : Box Size : {}'.format(global_box_size) + color.END)
    
-    # if 5000 <= global_box_size < 6500 : 
-    #     distance_person = 5.5
-    # elif 6500 <= global_box_size < 7500 : 
-    #     distance_person = 5.0
-    # elif 7500 <= global_box_size < 10500 : 
-    #     distance_person = 4.5
-    # elif 10500 <= global_box_size < 13000 : 
-    #     distance_person = 4.0
-    # elif 13000 <= global_box_size < 21000 : 
-    #     distance_person = 3.5
-    # elif 21000 <= global_box_size < 25000 : 
-    #     distance_person = 3.0    
-    # elif 25000 <= global_box_size < 33000 : 
-    #     distance_person = 2.5
-    # elif 33000 <= global_box_size < 45000 : 
-    #     distance_person = 2.0
-    # elif 45000 <= global_box_size < 75000 : 
-    #     distance_person = 1.5
-    # else :
-    #     pass
-    if 25000 <= global_box_size < 75000 :
-        #print("----------------------")
-        print(color.YELLOW +"[Navigation] : Now Robot Calculate The Destination "+color.END) 
+    if 25000 <= global_box_size < 33000 : 
+        distance_person = 3.0
+    elif 33000 <= global_box_size < 40000 : 
+        distance_person = 2.6
+    elif 40000 <= global_box_size < 50000 : 
+        distance_person = 2.2
+    elif 50000 <= global_box_size < 80000 : 
+        distance_person = 1.8
+    elif 80000 <= global_box_size < 100000 : 
+        distance_person = 1.4    
+    elif 100000 <= global_box_size < 130000 : 
         distance_person = 1.0
+    elif 130000 <= global_box_size < 140000 : 
+        distance_person = 0.6
+    elif 140000 <= global_box_size < 250000 : 
+        distance_person = 0.2
+   
+
+    # if 25000 <= global_box_size < 75000 :
+    #     #print("----------------------")
+    #     print(color.YELLOW +"[Navigation] : Now Robot Calculate The Destination "+color.END) 
+    #     distance_person = 1.0
+
         return distance_person
     else :
         print(color.YELLOW +"[Navigation] : No Need To Calculate"+color.END)
@@ -212,9 +210,13 @@ def navigation():
         
         global_mode = rospy.get_param('mode') # 모드를 받아오면 시작
 
-        if global_mode == 1:# 센트럴 라이징 완료 후
+        if global_mode == 1:
             global_no_person = False #사람 있음
             print("[INFO]: Navigation Mode Activate ")
+            rospy.set_param('person_detected',1)
+            rospy.set_param('person_warning',0)
+            
+
 
             while True: # 센트럴 라이징 시작 (중심에 올때까지 계속)
                 centralize_rate = rospy.Rate(10)
@@ -287,12 +289,16 @@ def navigation():
             robot_destination.pose.orientation.y = current_pose.pose.orientation.y 
             robot_destination.pose.orientation.z = current_pose.pose.orientation.z 
             robot_destination.pose.orientation.w = current_pose.pose.orientation.w 
-            
+        
             pub_destination.publish(robot_destination)      # 퍼블리시 할 항목
             global_result = False    
             while True:
                 
                 if global_result == True: # 도착하면
+                    rospy.set_param('person_detected',1)
+                    rospy.set_param('person_warning',1)
+                    
+                    
                     print (color.YELLOW + "[Navigation] : Goal Reached , Now Wait"+color.END)
                 
                     # if global_box_count > 0  : #사람이 있다
@@ -301,11 +307,13 @@ def navigation():
                         if (global_box_size < 25000) and (global_box_count > 0):
                             print(color.YELLOW + "[Navigation] : Person Clear"+color.END)
                             print(color.YELLOW + "[Navigation] : Patrol Mode Start"+color.END)
+                            
                             break
                         elif (global_box_count == 0) :
                             print(color.GREEN + "[INFO] : Patrol Mode Start After 5 second "+color.END)
                             waiting_timer(5) 
                             print(color.GREEN + "[INFO] : Patrol Mode Start"+color.END)
+                       
                             break 
                         else:
                             pass    
@@ -328,6 +336,10 @@ def navigation():
 
         elif global_mode == 0:
             print(color.GREEN + "[INFO]: Patrol Mode "+color.END)
+            rospy.set_param('person_detected',0)
+            rospy.set_param('person_warning',0)
+            rospy.set_param('person_cleared',0)
+           
         else:
             print(color.RED + "[INFO]: ERROR"+color.END)
 

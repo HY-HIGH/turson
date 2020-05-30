@@ -15,12 +15,15 @@ def sound_server():
         if (rospy.get_param('person_detected') == 1):
             if (rospy.get_param('person_warning') == 1):
                 soundhandle.stopAll()
-                soundhandle.say('This is restricted area! please go back!')
+                print ("person detected")
+                s1.play()
                 sleep(4)
+    
             else:
                 soundhandle.stopAll()
-                soundhandle.say('Person Detected!')
-                sleep(2)
+                print ("person warning")
+                s2.play()
+                sleep(4)
 
                 
         elif (rospy.get_param('person_cleared') == 1):
@@ -42,6 +45,10 @@ if __name__ == '__main__':
     rospy.set_param('person_detected',0)
     rospy.set_param('person_warnig',0)
     rospy.set_param('person_cleared',0)
+
+    s1 = soundhandle.waveSound("person.ogg", 1)
+    s2 = soundhandle.waveSound("danger.ogg", 1)
+    s3 = soundhandle.waveSound("corona.ogg", 1)
     
     soundhandle.stopAll()
 
