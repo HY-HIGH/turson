@@ -17,7 +17,7 @@ def sound_server():
                 soundhandle.stopAll()
                 print ("person detected")
                 s1.play()
-                sleep(4)
+                sleep(5)
     
             else:
                 soundhandle.stopAll()
